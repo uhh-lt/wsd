@@ -1,0 +1,58 @@
+*.class
+*.log
+
+
+# sbt specific
+.cache
+.history
+.lib/
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# Scala specific
+app.conf
+
+# Scala-IDE specific
+.scala_dependencies
+.worksheet
+
+# Dotenv
+.env
+
+# PHP
+vendor
+
+# Jupyter notebook
+.ipynb_checkpoints
+
+# Spark
+metastore_db
+
+
+#Project specific
+babelnet-downloader/var/babelnet-cache/*
+!babelnet-downloader/var/babelnet-cache/.gitkeep
+babelnet-downloader/var/composer-cache/*
+!babelnet-downloader/var/composer-cache/.gitkeep
+babelnet-downloader/var/output/
+!babelnet-downloader/var/output/.gitkeep
+.idea/
+spark-warehouse/
+github-issues/
+#!data/.gitkeep
+results/*
+!results/.gitkeep
+.ivy2
+.sbt
+docker-compose.override.yml
+babelnet-downloader/.test.env
+babelnet-downloader/babelnet-downloader.iml
+logs
+.Rhistory
+pgdata/
+babelnet-downloader/var/output_presentation
+data/models

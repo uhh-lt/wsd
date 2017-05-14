@@ -1,0 +1,21 @@
+version: '3'
+services:
+  db:
+    volumes:
+      - ./pgdata/data:/var/lib/postgresql/data # Assumes you downloaded postgres data to the folder ./pgdata
+  api:
+    ports:
+      - "9000:9000"
+    environment:
+      - APPLICATION_SECRET=change_me # Some random string
+      - WSP_FLICKR_API_KEY=change_me # Obtained from: https://www.flickr.com/services/apps/
+      - WSP_BING_API_KEY=change_me # Obtained from: https://www.microsoft.com/cognitive-services/en-US/subscriptions
+      - WSP_API_PUBLIC_URL=http://yourdomain.com:9000
+      - WSP_API_BING_IMAGE_FOLDER=/tmp/bing_images
+  web:
+    build:
+      args:
+        public_url: "/" # Supposes you want to run the web application on the root namespace
+        api_host: "http://yourdomain.com:9000" # Supposes the API is hosted on yourdomain.com
+    ports:
+      - "80:8080" # Supposes you want to run the Website under port 80

@@ -1,0 +1,4 @@
+BABELNET_KEY="your-key"
+BABELNET_CACHE_FOLDER="var/cache"
+OUTPUT_FOLDER="var/output"
+WORDLIST_FILE="var/wordlist.txt"

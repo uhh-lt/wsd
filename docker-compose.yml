@@ -1,0 +1,33 @@
+version: '3'
+services:
+  db:
+    image: postgres:9.5.5
+    volumes:
+      - ./pgdata/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=p0stgres
+  api:
+    build:
+      context: api/target/docker/stage
+    environment:
+      - APPLICATION_SECRET=change_me
+      - WSP_DB_SERVER_URL=jdbc:postgresql://db
+      - WSP_FLICKR_API_KEY=change_me
+      - WSP_BING_API_KEY=change_me
+      - WSP_IMAGE_SEARCH_ENGINE=bing
+      - WSP_API_PUBLIC_URL=http://localhost:9000
+      - WSP_API_BING_IMAGE_FOLDER=/tmp/bing_images
+
+    depends_on:
+      - db
+    restart: always
+  web:
+    build:
+      context: web
+      args:
+        public_url: ""
+        api_host: "http://localhost:9000"
+        external_api_endpoint: "http://ltmaggie.informatik.uni-hamburg.de/wsd-server/predictWordSense"
+        image_api_name: "flickr" # or "bing"
+    depends_on:
+      - api

@@ -1,0 +1,19 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index
+POST    /predictSense               controllers.Application.postPredictionQuery
+POST    /detectNamedEntities        controllers.Application.postDetectNamedEntitiesQuery
+
+GET /:model/wordVector/*word               controllers.Application.getWordVector(model, word)
+GET /:model/featureDetails/*feature/*senseID        controllers.Application.getFeatureDetails(model, feature, senseID)
+
+GET /bing-photo/:model/:senseID     controllers.BingAPI.redirectToPhoto(model, senseID)
+GET /flickr-photo/*text             controllers.FlickrAPI.redirectToPhoto(text)
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+    
