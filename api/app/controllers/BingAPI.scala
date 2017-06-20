@@ -29,7 +29,7 @@ class BingAPI @Inject() (ws: WSClient) extends Controller  with LazyLogging {
   val apiKey = config.getString("wsd.api.bing.api_key")
   val imageFolder = config.getString("wsd.api.bing.image_folder")
 
-  val apiEndpoint = "https://api.cognitive.microsoft.com/bing/v5.0/images/search"
+  val apiEndpoint = "https://api.cognitive.microsoft.com/bing/v7.0/images/search"
 
   def redirectToPhoto(inventory: String, encoded_sense_id: String) = Action {
      try {
