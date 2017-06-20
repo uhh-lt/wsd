@@ -7,7 +7,10 @@ import com.github.tototoshi.csv.{TSVFormat, CSVReader, CSVWriter}
   */
 object TSVUtils {
 
-  implicit object JoBimTextFormat extends TSVFormat
+  implicit object JoBimTextFormat extends TSVFormat {
+    override val quoteChar: Char = '元'
+    override val escapeChar: Char = '元'
+  }
 
   def readWithHeaders(path: String): (List[String], List[Map[String, String]]) = {
     val reader = CSVReader.open(path)
