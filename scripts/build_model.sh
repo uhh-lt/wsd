@@ -27,7 +27,7 @@ import_db_entities() {
         > data/voc-mwe-dbpedia-common-with-ddt.csv
 
     docker cp data/voc-mwe-dbpedia-common-with-ddt.csv \
-        wsd_db_1:/voc.csv
+        wsd_import_db:/voc.csv
 
     sql_cmd="""
     CREATE TABLE entities (text text);
@@ -35,7 +35,7 @@ import_db_entities() {
     CREATE INDEX entities_text_index ON entities (text); -- takes a few minutes
     """
 
-    docker-compose exec db psql wsp_default -U postgres -c "$sql_cmd"
+    docker exec -it wsd_import_db psql wsp_default -U postgres -c "$sql_cmd"
 }
 
 import_db_babelnet_ids() {
@@ -50,7 +50,7 @@ import_db_babelnet_ids() {
       awk 'NF == 8 && match($3, /_[0-9]*$/) {print $2"#"substr($3, RSTART+1, RLENGTH-1)"\t"$6":"substr($7,2)}' \
       > "$csv_file"
 
-    docker cp "$csv_file" wsd_db_1:/data.csv
+    docker cp "$csv_file" wsd_import_db:/data.csv
 
     sql_cmd="""
     CREATE TEMP TABLE temporary (sense_id text, babelnet_id text);
@@ -64,7 +64,7 @@ import_db_babelnet_ids() {
     DROP TABLE temporary;
     """
 
-    docker-compose exec db psql wsp_default -U postgres -c "$sql_cmd"
+    docker exec -it wsd_import_db psql wsp_default -U postgres -c "$sql_cmd"
 }
 
 build_model() {
@@ -90,32 +90,30 @@ shutdown_web_app() {
   docker-compose down
 }
 
-remove_import_db() {
+remove_import_db_container() {
   name="wsd_import_db"
   if [[ -n $(docker ps -a | awk '$NF=="'$name'"{print}') ]]; then docker rm -f "$name"; fi > /dev/null
 }
 
 start_import_db() {
   name="wsd_import_db"
-  remove_import_db # make sure no old container is running 
+  remove_import_db_container # make sure no old container is running
+  shutdown_web_app
   # Create new container
   docker run -v $(pwd)/pgdata/data:/var/lib/postgresql/data -p "5432:5432" --name=$name -d postgres:9.5.5 > /dev/null
   until docker exec -it $name psql -U postgres -c "select 1" -d postgres; do echo "Waiting for DB to startup"; sleep 1; done > /dev/null
   echo "DB is ready"
-  # Create DB
-  docker exec -it $name dropdb -U postgres wsp_default --if-exists
-  docker exec -it $name createdb -U postgres wsp_default
 }
 
 export_db() {
-  shutdown_web_app
-  start_import_db
+  docker exec -it $name dropdb -U postgres wsp_default --if-exists
+  docker exec -it $name createdb -U postgres wsp_default
   spark_submit_cmd "exportdb"
-  remove_import_db
 }
 
 build_model
+start_import_db
 export_db
 import_db_babelnet_ids
 import_db_entities
-
+remove_import_db_container
