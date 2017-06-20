@@ -1,6 +1,6 @@
 package de.tudarmstadt.lt.wsd.common
 
-import de.tudarmstadt.lt.wsd.common.utils.{NLPUtils, StringUtils, Utils}
+import de.tudarmstadt.lt.wsd.common.utils.{JoBimTextTSVUtils, NLPUtils, StringUtils, Utils}
 import edu.stanford.nlp.ling.Sentence
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser
 import edu.stanford.nlp.trees.PennTreebankLanguagePack
@@ -47,19 +47,32 @@ object DependencyFeatureExtractor extends FeatureExtractor {
 }
 
 object WordFeatureExtractor extends FeatureExtractor {
+  def extractFeatures(context: String, word: String): List[String] = {
+    context.split(" ").filter(_.toLowerCase != word.toLowerCase()).toList
+  }
+}
 
+object LemmaFeatureExtractor extends FeatureExtractor {
   def extractFeatures(context: String, word: String): List[String] = {
     val cleanedContext = context.toLowerCase
     NLPUtils.convertToLemmas(cleanedContext).filter(_ != word.toLowerCase)
   }
-
 }
 
-object WithWordFeatureExtractor extends FeatureExtractor {
-
+object LemmaPlusWordFeatureExtractor extends FeatureExtractor {
   def extractFeatures(context: String, word: String): List[String] = {
-    val cleanedContext = context.toLowerCase
-    NLPUtils.convertToLemmas(cleanedContext) // TODO clariify difference to WordFeatureExtractor
+    val lemmas = LemmaFeatureExtractor.extractFeatures(context, word)
+    val words = WordFeatureExtractor.extractFeatures(context, word)
+    (lemmas ::: words).distinct
   }
-
 }
+
+object OnlyDepFromHolingExtractor extends FeatureExtractor {
+  def extractFeatures(context: String, word: String): List[String] = {
+    context.split("  ")
+      .filter(_.nonEmpty)
+      .map{JoBimTextTSVUtils.extractFeatureFromHoling}
+      .toList
+  }
+}
+

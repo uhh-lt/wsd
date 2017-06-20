@@ -1,7 +1,7 @@
 package de.tudarmstadt.lt.wsd.common.prediction
 
 import com.typesafe.scalalogging.LazyLogging
-import de.tudarmstadt.lt.wsd.common.{FeatureExtractor, FeatureVectorizer, WordFeatureExtractor}
+import de.tudarmstadt.lt.wsd.common.{FeatureExtractor, FeatureVectorizer, LemmaFeatureExtractor, OnlyDepFromHolingExtractor}
 import de.tudarmstadt.lt.wsd.common.prediction.DetailedPredictionPipeline._
 import de.tudarmstadt.lt.wsd.common.utils.{FileUtils, TSVUtils}
 
@@ -12,14 +12,21 @@ class DatasetPredictionPipeline(model: WSDModel, runConfig: RunConfig)
   extends LazyLogging {
   import DatsetPredictionPipeline._
 
-  val extractor: FeatureExtractor = WordFeatureExtractor // FIXME should depend on model, might be coupled to word vector?
+  val extractor: FeatureExtractor = LemmaFeatureExtractor // FIXME should depend on model, might be coupled to word vector?
   val vectorizer: FeatureVectorizer = FeatureVectorizer.getVectorizer(model.word_vector_model)
   val classifierGenerator: (String) => WordSenseClassifier = WordSenseClassifiers.getGenerator(model)
 
-  val extractFeatures: Pipeline = (data: Data) =>
-    data + (CONTEXT_FEATURES_COL -> extractor.extractFeatures(
-      data(CONTEXT_COL).asInstanceOf[String],
-      data(TARGET_COL).asInstanceOf[String]))
+  val extractFeatures: Pipeline = (data: Data) => {
+    if (runConfig.onlyDirectDepFeatures) {
+      data + (CONTEXT_FEATURES_COL -> OnlyDepFromHolingExtractor.extractFeatures(
+        data(TARGET_HOLING_FEATURE_COL).asInstanceOf[String],
+        data(TARGET_COL).asInstanceOf[String]))
+    } else {
+      data + (CONTEXT_FEATURES_COL -> extractor.extractFeatures(
+        data(CONTEXT_COL).asInstanceOf[String],
+        data(TARGET_COL).asInstanceOf[String]))
+    }
+  }
 
   val vectorizeFeatures: Pipeline = (data: Data) =>
     data + (CONTEXT_VECTOR_COL -> vectorizer.doVectorize(

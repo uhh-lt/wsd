@@ -2,7 +2,7 @@ package de.tudarmstadt.lt.wsd.common.prediction
 
 import com.typesafe.scalalogging.LazyLogging
 import de.tudarmstadt.lt.wsd.common.model.{Sense, SenseVector}
-import de.tudarmstadt.lt.wsd.common.{Feature, FeatureExtractor, FeatureVectorizer, WordFeatureExtractor}
+import de.tudarmstadt.lt.wsd.common.{Feature, FeatureExtractor, FeatureVectorizer, LemmaFeatureExtractor}
 import breeze.linalg.{Vector => BV}
 import de.tudarmstadt.lt.wsd.common.prediction.DetailedPredictionPipeline.Predictions
 
@@ -14,7 +14,7 @@ class DetailedPredictionPipeline(val model: WSDModel) extends PredictWordInConte
   with LazyLogging {
   import DetailedPredictionPipeline._
 
-  val extractor: FeatureExtractor = WordFeatureExtractor // FIXME should depend on model, might be coupled to word vector?
+  val extractor: FeatureExtractor = LemmaFeatureExtractor // FIXME should depend on model, might be coupled to word vector?
   val vectorizer: FeatureVectorizer = FeatureVectorizer.getVectorizer(model.word_vector_model)
   val classifierGenerator: (String) => WordSenseClassifier = WordSenseClassifiers.getGenerator(model)
 
