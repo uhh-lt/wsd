@@ -34,15 +34,14 @@ object SenseVector extends SkinnyNoIdMapper[SenseVector] {
   )
 
   def findAllByModelAndCaseIgnoredWord(model: SenseVectorModel, word: String): List[SenseVector] =
-    findAllBy(sqls.eq(sv.model, model.toString).and.eq(sqls"LOWER(${s.word})", word.toLowerCase()))
+    findAllBy(sqls.eq(sv.model, model.toDbModelString).and.eq(sqls"LOWER(${s.word})", word.toLowerCase()))
 
   def findByModelAndId(model: SenseVectorModel, sense_id: String): Option[SenseVector] =
-    findBy(sqls.eq(sv.model, model.toString).and.eq(sv.sense_id, sense_id))
+    findBy(sqls.eq(sv.model, model.toDbModelString).and.eq(sv.sense_id, sense_id))
 
   def findAllByModelAndIds(model: SenseVectorModel, sense_ids: List[String]): List[SenseVector] =
-    findAllBy(sqls.eq(sv.model, model.toString).and.in(sv.sense_id, sense_ids))
+    findAllBy(sqls.eq(sv.model, model.toDbModelString).and.in(sv.sense_id, sense_ids))
 
   def findAllByModel(model: SenseVectorModel): List[SenseVector] =
-    findAllBy(sqls.eq(sv.model, model.toString))
-
+    findAllBy(sqls.eq(sv.model, model.toDbModelString))
 }

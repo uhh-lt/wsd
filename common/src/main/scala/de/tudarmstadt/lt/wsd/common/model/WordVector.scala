@@ -19,7 +19,7 @@ case class WordVector(word: String, model: String, vector: BSV[Double]) {
 
 object WordVector extends Enumeration with SkinnyNoIdMapper[WordVector] {
   type ModelName = Value
-  val coocdeps, coocwords, self, any = Value
+  val coocdeps, coocwords, self, undefined = Value
 
   implicit def implicitToString: ModelName => String = (t: ModelName) => t.toString
 

@@ -37,7 +37,7 @@ object Sense extends Enumeration with SkinnyNoIdMapper[Sense] {
     Seq(Sense.cosets1k, Sense.cosets2k).contains(inventoy)
 
   type InventoryName = Value
-  val traditional, cosets2k, cosets1k, any = Value
+  val traditional, cosets2k, cosets1k, undefined = Value
 
   implicit def implicitToString: InventoryName => String = (t: InventoryName) => t.toString
 

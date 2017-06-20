@@ -6,7 +6,19 @@ package de.tudarmstadt.lt.wsd.common.model
 case class SenseVectorModel(
   sense_inventory: Sense.InventoryName,
   word_vector_model: WordVector.ModelName) {
-  override def toString: String = s"${sense_inventory}_$word_vector_model"
+
+  override def toString: String = {
+    val word_vector_component = if (word_vector_model == WordVector.undefined) "" else s"_$word_vector_model"
+    s"$sense_inventory$word_vector_component"
+  }
+
+  def toDbModelString: String = {
+    val word_vector_component = if (word_vector_model == WordVector.undefined)
+      s"_${WordVector.self}" else s"_$word_vector_model"
+
+    s"$sense_inventory$word_vector_component"
+  }
+
   def isInventoryCoSet: Boolean = Seq(Sense.cosets1k, Sense.cosets2k).contains(sense_inventory)
 }
 

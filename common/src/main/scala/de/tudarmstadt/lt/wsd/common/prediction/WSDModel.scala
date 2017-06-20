@@ -1,6 +1,6 @@
 package de.tudarmstadt.lt.wsd.common.prediction
 
-import de.tudarmstadt.lt.wsd.common.model.{Sense, SenseVectorModel, WordVector}
+import de.tudarmstadt.lt.wsd.common.model.{Sense, SenseInventory, SenseVectorModel, WordVector}
 
 /**
   * Created by fide on 12.04.17.
@@ -14,7 +14,12 @@ case class WSDModel(
     sense_inventory = sense_inventory,
     word_vector_model = word_vector_model
   )
-  override def toString: String = s"${classifier}_${sense_inventory}_$word_vector_model"
+
+  override def toString: String = {
+    val inventory_component = if (sense_inventory == Sense.undefined) "" else s"_$sense_inventory"
+    val word_vector_component = if (word_vector_model == WordVector.undefined) "" else s"_$word_vector_model"
+    s"$classifier$inventory_component$word_vector_component"
+  }
 
   // TODO maybe refactor this?! There should be a possiblity to have
   // TODO multiple inventories of the same type without creating a specific enum.
@@ -29,16 +34,18 @@ object WSDModel {
 
     model.split("_") match {
       case Array(classifier: String) =>
+        assert(classifier == WordSenseClassifiers.ensemble.toString,
+          "Currently only ensemble can omit inventory and word vector components")
         WSDModel(
           classifier = WordSenseClassifiers withName classifier,
-          sense_inventory = Sense.any,
-          word_vector_model = WordVector.any // for random and other baselines
+          sense_inventory = Sense.undefined,
+          word_vector_model = WordVector.undefined
         )
       case Array(classifier: String, inventory: String) =>
         WSDModel(
           classifier = WordSenseClassifiers withName classifier,
           sense_inventory = Sense withName inventory,
-          word_vector_model = WordVector.any // for random and other baselines
+          word_vector_model = WordVector.undefined // for random and other baselines
         )
       case Array(classifier: String, inventory: String, word_vector_model: String) =>
         WSDModel(
