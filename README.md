@@ -29,24 +29,21 @@ git clone https://github.com/uhh-lt/wsd
 cd wsd
 ```
 
-### 1. Prepare the postgres DB
+### 1. Download precalculated DB
 
-We recommend to first use a toy training dataset to build a toy model within a few minutes. Building the full model is the most time intensive part and also currently least documented. That is why we thought you might not want to start with it, but first finish the installation of the web application and then come back to build the full model in seciton 1.2.
+We provide a ready for use database. To download and prepare the project with this database, you can use the following instructions:
 
-#### 1.1 Build small toy model
 ```bash
-./scripts/build_toy_model.sh
+wget http://ltdata1.informatik.uni-hamburg.de/joint/wsd/db.tar.gz
+mkdir pgdata
+tar -xzf db.tar.gz -C pgdata
+# Adjust UID, 999 is the postgres user in the docker container
+docker run -v "$(pwd)/pgdata:/pgdata" alpine chown -R 999:999 /pgdata/data
 ```
-This model only provides senses for the word "Python" but is fully functional and should be used during the initial setup of the web application.
 
-#### 1.2 Build full model
+NOTE: The Postgres data is currently around 120 GB!
 
-Once you are ready to build the full model, here is how to do it. It will take nearly 11 hours on an eight core machine with 30GB of memory and needs 120GB of free disk space.
-
-- First follow the instruction in `data/training/README.md` to download the training data into the same folder.
-- Than take a lookt at the script `scripts/spark_submit_jar.sh` and adjust the amount of memory used to whatever you want to provide to Spark.
-- Optionally you can copy `sample-app.conf` to `app.conf` and include the commented out params in `scripts/spark_submit_jar.sh` and further configure the software by changing `app.conf`. Take a look at `sample-app.conf` to get an idea of what can be configured.
-- Finally use the following script to compute the model: `scripts/build_model.sh`
+For instructions on how to rebuild the DB with the model, please see below: [Build your own DB](#build-your-own-db)
 
 ### 2. Start the web application
 
@@ -58,6 +55,25 @@ To start the application:
 - By changing `docker-compose.override.yml` you can customize the deployment.
 See the [official documentation](https://docs.docker.com/compose/compose-file/) for detailed explanation of this file.
 - Then start the web application with: `./scripts/web_app/start.sh`
+
+# Build your own DB
+
+In case you want to build the model on your own, we recommend to first use a toy training dataset to build a toy model within a few minutes. Building the full model is the most time intensive part and also currently least documented. That is why we thought you might not want to start with it, but first finish the installation of the web application and then come back to build the full model in seciton 1.2.
+
+## Build small toy model
+```bash
+./scripts/build_toy_model.sh
+```
+This model only provides senses for the word "Python" but is fully functional and should be used during the initial setup of the web application.
+
+## Build full model
+
+Once you are ready to build the full model, here is how to do it. It will take nearly 11 hours on an eight core machine with 30GB of memory and needs 120GB of free disk space.
+
+- First follow the instruction in `data/training/README.md` to download the training data into the same folder.
+- Than take a lookt at the script `scripts/spark_submit_jar.sh` and adjust the amount of memory used to whatever you want to provide to Spark.
+- Optionally you can copy `sample-app.conf` to `app.conf` and include the commented out params in `scripts/spark_submit_jar.sh` and further configure the software by changing `app.conf`. Take a look at `sample-app.conf` to get an idea of what can be configured.
+- Finally use the following script to compute the model: `scripts/build_model.sh`
 
 # Maintenance related commands
 
