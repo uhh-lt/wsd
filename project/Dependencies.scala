@@ -12,7 +12,7 @@ object Dependencies {
   val play_json = "com.typesafe.play" %% "play-json" % "2.5.8" exclude("com.fasterxml.jackson.core", "jackson-databind")
   val jackson_core = "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.2"
   val jackson_module = "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.8.2"
-  val sorm = "org.sorm-framework" % "sorm" % "0.3.21"
+  val scala_logging = "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
 
   val skinny_orm = "org.skinny-framework" %% "skinny-orm" % "2.3.6"
 
@@ -52,14 +52,14 @@ object Dependencies {
     protobuf,
     chill,
     postgres,
-    scalatest
+    scalatest,
+    scala_logging
   )
 
   val commonDeps = baseDeps ++ Seq(
     play_json,
     jackson_core,
     jackson_module,
-    sorm,  // still used?
     scopt,
     spark_core,
     spark_sql,
