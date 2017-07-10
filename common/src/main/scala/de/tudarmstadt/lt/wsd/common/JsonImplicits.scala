@@ -68,9 +68,9 @@ object JsonImplicits {
       "rank" -> prediction.rank.toString,
       "confidenceProb" -> prediction.confidence,
       // TODO remove dirty hack
-      "mutualFeatures" -> prediction.mutualFeatures.filterNot(_.weight.isNaN),
+      "mutualFeatures" -> prediction.mutualFeatures.filterNot(_.weight.isNaN).sortBy(-_.weight),
       "contextFeatures" -> "", //FIXME prediction.contextFeatures.map(f: String => Feature(f, 1)),
-      "top20ClusterFeatures" -> prediction.senseFeatures.filterNot(_.weight.isNaN).take(20),
+      "top20ClusterFeatures" -> prediction.senseFeatures.filterNot(_.weight.isNaN).sortBy(-_.weight).take(20),
       "numClusterFeatures" -> prediction.senseFeatures.count(!_.weight.isNaN)
     )
   }
