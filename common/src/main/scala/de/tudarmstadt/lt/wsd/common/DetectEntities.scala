@@ -1,12 +1,13 @@
 package de.tudarmstadt.lt.wsd.common
 
 import de.tudarmstadt.lt.wsd.common.utils.NLPUtils
-import de.tudarmstadt.lt.wsd.common.utils.NLPUtils.OTHER_TAG
+import de.tudarmstadt.lt.wsd.common.utils.NLPUtils.{OTHER_TAG, ORGANIZATION_TAG, DATE_TAG}
 import scalikejdbc._
 
 /*
   Note: this needs a setup: fill DB table with entities
-  @See scripts/integration_test.sh
+  @See scripts/build_toy_model.sh or scripts/build_toy_model.sh function import_db_entities()
+
 */
 object DetectEntities {
 
@@ -73,7 +74,8 @@ object DetectEntities {
 
   def getEntitiesFromStanford(text: String) = {
     val joinedTokens = NLPUtils.convertToIndexedNERsWithStanfordCoreNLP331(text)
-    joinedTokens.filter{case (start, end, entityName) => entityName != OTHER_TAG}
+    val ignoredTags = List(OTHER_TAG, ORGANIZATION_TAG, DATE_TAG)
+    joinedTokens.filterNot{case (start, end, entityName) => ignoredTags.contains(entityName)}
   }
 
   def getNounsFromStanford(text: String) = {

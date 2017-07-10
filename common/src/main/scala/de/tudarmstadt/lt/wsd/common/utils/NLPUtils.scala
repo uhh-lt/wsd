@@ -14,6 +14,9 @@ import scala.collection.JavaConversions._
   */
 object NLPUtils {
   val OTHER_TAG = "O"
+  val ORGANIZATION_TAG = "ORGANIZATION"
+  val DATE_TAG = "DATE"
+
   val lemmatizerProps = new Properties()
   lemmatizerProps.setProperty("annotators", "tokenize, ssplit, pos, lemma")
   lazy val lemmatizer = new StanfordCoreNLP(lemmatizerProps)
