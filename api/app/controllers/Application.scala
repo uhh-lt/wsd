@@ -1,7 +1,8 @@
 package controllers
 
-import Implicits._
+import de.tudarmstadt.lt.wsd.common.JsonImplicits._
 import play.api.libs.json._
+import play.api.cache
 import de.tudarmstadt.lt.wsd.common._
 import java.net.{URLClassLoader, URLDecoder, URLEncoder}
 import javax.inject._
@@ -14,8 +15,9 @@ import de.tudarmstadt.lt.wsd.common.prediction.{DetailedPredictionPipeline, WSDM
 import de.tudarmstadt.lt.wsd.common.utils.NLPUtils
 
 @Singleton
-class Application  @Inject() extends Controller {
+class Application @Inject() extends Controller {
   import Implicits._
+  import de.tudarmstadt.lt.wsd.common.JsonImplicits._
 
   private val config = ConfigFactory.load()
 

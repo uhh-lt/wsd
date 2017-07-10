@@ -1,7 +1,7 @@
 package de.tudarmstadt.lt.wsd.common.model
 
 import scalikejdbc._
-import skinny.orm.{Alias, SkinnyNoIdMapper}
+import skinny.orm.{Alias, SkinnyNoIdCRUDMapper, SkinnyNoIdMapper}
 import de.tudarmstadt.lt.wsd.common.model.Implicits._
 
 
@@ -29,9 +29,10 @@ case class Sense(sense_id: String,
   val num_id: Int = -1 // FIXME
 
   def isInventoryCoset: Boolean = Sense.isInventoryCoset(Sense withName inventory)
+  val uniqueID = s"$sense_id-$inventory"
 }
 
-object Sense extends Enumeration with SkinnyNoIdMapper[Sense] {
+object Sense extends Enumeration with SkinnyNoIdCRUDMapper[Sense] {
 
   def isInventoryCoset(inventoy: InventoryName): Boolean =
     Seq(Sense.cosets1k, Sense.cosets2k).contains(inventoy)
@@ -46,10 +47,10 @@ object Sense extends Enumeration with SkinnyNoIdMapper[Sense] {
   val s: Alias[Sense] = defaultAlias
 
   override def extract(rs: WrappedResultSet, n: scalikejdbc.ResultName[Sense]): Sense = autoConstruct(rs, n)
-  def findAllByCaseIgnoredWord(word: String): List[Sense] =
-    findAllBy(sqls.eq(sqls"LOWER(${s.word})", word.toLowerCase()))
+  def findAllByCaseIgnoredWord(word: String)(implicit s: DBSession = autoSession): List[Sense] =
+    findAllBy(sqls.eq(sqls"LOWER(${defaultAlias.word})", word.toLowerCase()))
 
-  def findByInventoryAndId(inventory: InventoryName, id: String): Option[Sense] =
-    findBy(sqls.eq(s.inventory, inventory.toString).and.eq(s.sense_id, id))
+  def findByInventoryAndId(inventory: InventoryName, id: String)(implicit s: DBSession = autoSession): Option[Sense] =
+    findBy(sqls.eq(defaultAlias.inventory, inventory.toString).and.eq(defaultAlias.sense_id, id))
 
 }

@@ -16,8 +16,9 @@ services:
       - WSP_BING_API_KEY=change_me
       - WSP_IMAGE_SEARCH_ENGINE=bing
       - WSP_API_PUBLIC_URL=http://localhost:9000
-      - WSP_API_BING_IMAGE_FOLDER=/tmp/bing_images
-
+      - WSP_API_BING_IMAGE_FOLDER=/imgdata/bing
+    volumes:
+      - ./imgdata/bing:/imgdata/bing
     depends_on:
       - db
     restart: always
@@ -28,6 +29,6 @@ services:
         public_url: ""
         api_host: "http://localhost:9000"
         external_api_endpoint: "http://ltmaggie.informatik.uni-hamburg.de/wsd-server/predictWordSense"
-        image_api_name: "flickr" # or "bing"
+        image_api_name: "bing" # or "flickr"
     depends_on:
       - api

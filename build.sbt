@@ -29,6 +29,13 @@ lazy val common = (project in file("common")).
   settings(
     name := "wsd-common",
     libraryDependencies ++= commonDeps,
+    assemblyMergeStrategy in assembly := {
+      case PathList("META-INF", "io.netty.versions.properties") => MergeStrategy.first
+      case PathList("org", "apache", "commons", "logging", xs @ _*) => MergeStrategy.first
+      case x =>
+        val oldStrategy = (assemblyMergeStrategy in assembly).value
+        oldStrategy(x)
+    },
     // Only for convience in: sbt common/console
     initialCommands in console:= """
       |import de.tudarmstadt.lt.wsd.common._

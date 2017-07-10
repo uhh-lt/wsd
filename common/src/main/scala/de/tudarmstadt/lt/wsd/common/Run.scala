@@ -1,16 +1,25 @@
 package de.tudarmstadt.lt.wsd.common
 
 import java.io.File
+import javax.inject.Inject
 
+import akka.actor.ActorSystem
+import skinny.Skinny
+import akka.stream.ActorMaterializer
 import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
 import com.typesafe.scalalogging.LazyLogging
 import de.tudarmstadt.lt.wsd.common.eval.{EvaluationStatistics, Evaluator, SenseInventoryMapping}
+import de.tudarmstadt.lt.wsd.common.model.images.BingImageDownloader
 import de.tudarmstadt.lt.wsd.common.model.{Sense, SenseVectorModel}
 import de.tudarmstadt.lt.wsd.common.prediction._
 import de.tudarmstadt.lt.wsd.common.utils.{FileUtils, TSVUtils, Utils}
 import org.apache.commons.io.FilenameUtils
+import play.api.libs.ws.ahc.AhcWSClient
 import scalikejdbc._
 import scalikejdbc.config._
+
+import scala.concurrent.{Await, Future}
+import scala.util.{Failure, Success}
 
 /**
   * Created by fide on 07.12.16.
@@ -24,7 +33,7 @@ object Run extends LazyLogging {
   object Command extends Enumeration {
     type Name = Value
     val predict, indexdb, evalbabel, evalstats, inventorystats, filterdataset, mappingstats,
-    exportinventory, exporttwsiinventory, extractinventory, nocmd = Value
+    exportinventory, exporttwsiinventory, extractinventory, downloadimages, nocmd = Value
   }
 
   import Command._
@@ -43,7 +52,9 @@ object Run extends LazyLogging {
                     secondSenseInventoryFile: Option[String] = None,
                     outputFolder: String = defaultResultLocation,
                     useGlobalInventory: Boolean = false,
-                    inventoryName: Sense.InventoryName = Sense.traditional
+                    inventoryName: Sense.InventoryName = Sense.traditional,
+                    frequencyFile: String = "",
+                    downloadLimit: Option[Int] = None
                    )
 
   val config = ConfigFactory.load()
@@ -219,6 +230,17 @@ object Run extends LazyLogging {
           .text(s"Name of the model to use")
       )
 
+    cmd("downloadimages").action((_, c) => c.copy(mode = downloadimages)).
+      text("Download images for cache from Bing").
+      children(
+        opt[String]('f', "frequencyFile").required()
+          .action((x,c) => c.copy(frequencyFile = x))
+          .text("A tab seperated CSV file with Sense IDs and their frequencies as columns."),
+        opt[Int]('l', "limit").required()
+          .action((x,c) => c.copy(downloadLimit = Some(x)))
+          .text("Number of maximal downloads")
+      )
+
 
     checkConfig {
       case x if x.mode == nocmd => failure("No command given.")
@@ -233,6 +255,45 @@ object Run extends LazyLogging {
         && x.senseInventoryFile.isEmpty => failure("filterSensesOnlyMapped needs externalReferenceInventory")
       case _ => success
     }
+  }
+
+  def mainDownloadImages(frequencyFile: String, maxOpt: Option[Int]): Unit = {
+    val max = maxOpt.getOrElse(10)
+
+    import scala.concurrent.ExecutionContext.Implicits.global
+
+    implicit val system = ActorSystem()
+    implicit val materializer = ActorMaterializer()
+    implicit val wsClient = AhcWSClient()
+
+    val (_, wordFreqs) = TSVUtils.readWithHeaders(frequencyFile)
+    val mostFreq = wordFreqs.sortBy(-_("freq").toInt).map(_("word")).take(max)
+
+    println(s"STARTING DOWNLOADS (all senses for maximal $max words)\n")
+
+    val senses = mostFreq.map(word => Future(Sense.findAllByCaseIgnoredWord(word)))
+    val downloader = new BingImageDownloader()
+
+    val downloads = senses.map(a => a.map( b => b.map { sense =>
+      println(s"Starting to download image for ${sense.uniqueID}.")
+      val future = downloader.readFromDiskOrDownload(sense)
+      future.onComplete {
+        case Success(url) => println(s"Download for ${sense.uniqueID} completed.")
+        case Failure(exception) => println(s"Download error for ${sense.uniqueID}: $exception\n")
+      }
+      future
+    }))
+
+    // Converting List[Future[List[Future[String]]]] to Future
+    val download = Future.sequence(downloads).map(xs => Future.sequence(xs.flatten)).flatMap(identity)
+
+    download.onComplete {
+      case Success(urls) => println(s"All ${urls.length} downloads finished.\n")
+      case Failure(exception) => println(s"STOPPING DOWNLOADS with: $exception\n")
+    }
+
+    import scala.concurrent.duration._
+    Await.result(download, max * 1 minute)
   }
 
   def main(args: Array[String]): Unit = {
@@ -259,6 +320,7 @@ object Run extends LazyLogging {
           case `evalstats` => mainEvalStats(params)
           case `exportinventory` => mainExportDefaultInventory(params)
           case `mappingstats` => mainMappingStats(params)
+          case `downloadimages` => mainDownloadImages(params.frequencyFile, params.downloadLimit)
         }
       case None =>
        // Utils.printConfig(config) // TODO why is printing even for common/run

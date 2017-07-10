@@ -9,12 +9,20 @@ object Dependencies {
   val spark_mllib = "org.apache.spark" %% "spark-mllib" % sparkVersion % "provided"
   val spark_hive = "org.apache.spark" %% "spark-hive" % sparkVersion % "provided"
 
-  val play_json = "com.typesafe.play" %% "play-json" % "2.5.8" exclude("com.fasterxml.jackson.core", "jackson-databind")
+  val playVersion = "2.5.8" // also configured in project/plugins.sbt
+  val play_json = "com.typesafe.play" %% "play-json" % playVersion exclude("com.fasterxml.jackson.core", "jackson-databind")
+  val play_ws = "com.typesafe.play" %% "play-ws" % playVersion exclude("com.fasterxml.jackson.core", "jackson-databind") exclude("oauth.signpost", "signpost-commonshttp")
+
+  val play_server = "com.typesafe.play" %% "play-server" % playVersion
+  val play_netty_server = "com.typesafe.play" %% "play-netty-server" % playVersion
+
   val jackson_core = "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.2"
   val jackson_module = "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.8.2"
   val scala_logging = "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
 
-  val skinny_orm = "org.skinny-framework" %% "skinny-orm" % "2.3.6"
+  val skinnyVersion = "2.3.6"
+  val skinny_orm = "org.skinny-framework" %% "skinny-orm" % skinnyVersion
+  val skinny_orm_test = "org.skinny-framework" %% "skinny-test" % skinnyVersion
 
   val scalikejdbc = "org.scalikejdbc" %% "scalikejdbc" % "2.5.0"
   val scalikejdbc_config = "org.scalikejdbc" %% "scalikejdbc-config"  % "2.5.0"
@@ -23,7 +31,6 @@ object Dependencies {
   val commons_io = "commons-io" % "commons-io" % "2.5"
 
   val csv_reader = "com.github.tototoshi" %% "scala-csv" % "1.3.4"
-
 
   // because JoBimTexts dependency relation features are consistent with stanford corenlp version 3.3.1
   val stanfordCoreNlpVersion = "3.3.1"
@@ -69,7 +76,11 @@ object Dependencies {
     scalikejdbc_config,
     commons_io,
     skinny_orm,
-    csv_reader
+    skinny_orm_test,
+    csv_reader,
+    play_ws,
+    play_server % Test,
+    play_netty_server % Test
   )
 
   val sparkDeps = baseDeps ++ Seq(
@@ -84,7 +95,6 @@ object Dependencies {
     // Play is configured via PlayScala plugin in build.sbt!
     jdbc,
     cache,
-    ws,
     filters,
     scalikejdbc_play_initlzr,
     javaWs,
