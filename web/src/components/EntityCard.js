@@ -50,7 +50,7 @@ class EntityCard extends React.Component {
 
         const title = (
             <span>
-                <CardTitle title={hypernym} subtitle={type} subtitleColor={white} titleColor={white} />
+                <CardTitle title={hypernym} subtitleColor={white} titleColor={white} />
                 {isFetching ? <LinearProgress mode="indeterminate" /> : <span />}
             </span>
         );
