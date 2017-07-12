@@ -15,7 +15,7 @@ services:
   web:
     build:
       args:
-        public_url: "/" # Supposes you want to run the web application on the root namespace
+        public_url: "" # Supposes you want to run the web application on the root namespace
         api_host: "http://yourdomain.com:9000" # Supposes the API is hosted on yourdomain.com
     ports:
       - "80:8080" # Supposes you want to run the Website under port 80
