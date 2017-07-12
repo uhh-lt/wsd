@@ -19,7 +19,7 @@ import scala.concurrent.Future
 import scala.util.Try
 
 /**
-  * chmod a+w tmp/bing_images
+  * chmod a+w imgdata/bing
   */
 class BingImageDownloader(baseUrl: String) extends LazyLogging {
 
@@ -31,7 +31,7 @@ class BingImageDownloader(baseUrl: String) extends LazyLogging {
   private val config = ConfigFactory.load()
   private val apiKey = config.getString("wsd.common.bing.api_key")
   private val imageFolder = config.getString("wsd.common.bing.image_folder")
-  private val apiEndpoint = baseUrl + "/bing/v7.0/images/search" // FIXME: v5.0
+  private val apiEndpoint = baseUrl + "/bing/v5.0/images/search" // FIXME: v5.0
 
   def readCache: Map[String, String] = {
     val folders = new File(imageFolder).listFiles().flatMap(_.listFiles).map(_.getCanonicalPath)

@@ -292,8 +292,12 @@ object Run extends LazyLogging {
       case Failure(exception) => println(s"STOPPING DOWNLOADS with: $exception\n")
     }
 
+    val shutdown = download
+      .andThen { case _ => wsClient.close() }
+      .andThen { case _ => system.terminate() }
+
     import scala.concurrent.duration._
-    Await.result(download, max * 1 minute)
+    Await.result(shutdown, max * 1 minute)
   }
 
   def main(args: Array[String]): Unit = {
