@@ -56,7 +56,7 @@ const FormCard = React.createClass({
                             required
                             updateImmediately
                             value={context}
-                            floatingLabelText="Disambiguation Context"
+                            floatingLabelText="Context"
                             floatingLabelFixed={true}
                             fullWidth={true}
                         />
@@ -72,9 +72,10 @@ const FormCard = React.createClass({
                         <ModelNameDropDownMenu
                             required
                             value={modelName}
-                            floatingLabelText="Model based on"
+                            floatingLabelText="Model"
                             floatingLabelFixed={true}
-                            fullWidth={true}
+                            autoWidth={true}
+                            style={{minWidth: "450px"}}
                         />
                     </Formsy.Form>
                 </CardText>

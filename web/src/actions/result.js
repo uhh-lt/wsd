@@ -24,7 +24,7 @@ export function hideResult() {
 export const fetchResult = query => dispatch => {
     dispatch(requestResult(query));
 
-    let api = (query.modelName == 'depslm') ? EugenAPI : API;
+    let api = (query.modelName === 'external_model_depslm') ? EugenAPI : API;
 
     api.predictSense(query.word, query.context, query.modelName)
         .then(json => dispatch(receiveResult(query, json)))

@@ -69,7 +69,7 @@ const styles = {
 const SiteLayout = ({handleChangeList, handleToggleShowImages, showImages, children}) => (
     <div>
         <AppBar style={styles.appBar}
-                title="Unsupervised Knowledge Free Word Sense Disambiguation"
+                title="Unsupervised & Knowledge-Free & Interpretable Word Sense Disambiguation"
                 showMenuIconButton={false}
         />
         <div style={styles.root}>
@@ -97,20 +97,15 @@ const SiteLayout = ({handleChangeList, handleToggleShowImages, showImages, child
 
             </SelectableList>
             <Divider />
-            <List>
-                <Subheader>Settings</Subheader>
-                <ListItem
-                    primaryText="Show images"
-                    rightToggle={
-                        <Toggle
-                            onToggle={handleToggleShowImages}
-                            toggled={showImages}
-                        />
-                    }
-                    value={ALL_WORD_URL_PATH}
-
-                />
-            </List>
+            <SelectableList
+                value=""
+                onChange={(event, value) => { window.location = value; }}
+            >
+                <Subheader>Resources</Subheader>
+                <ListItem primaryText="Original Paper" value="TODO"/>
+                <ListItem primaryText="Source Code" value="https://github.com/uhh-lt/wsd" />
+                <ListItem primaryText="About" value="http://jobimtext.org/wsd" />
+            </SelectableList>
         </Drawer>
 
         <FullWidthSection style={styles.footer}>

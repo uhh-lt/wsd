@@ -24,6 +24,9 @@ function convertLegacyToNew(json) {
     const tupledFeatToDict = (t) => {
         return {label: t[0], weight: t[1]}
     };
+
+    const strFeatToDict = (s) => tupledFeatToDict(s.split(":"));
+
     return {
         ...json,
         contextFeatures: [],
@@ -33,18 +36,18 @@ function convertLegacyToNew(json) {
                 rank: p.rank.toString(),
                 senseCluster: {
                     ...p.senseCluster,
-                    hypernyms: p.senseCluster["weighted_hypernyms"].map(x => x[0])
+                    hypernyms: p.senseCluster.hypernyms.map((s) => s.split(":")[0])
                 },
-                contextFeatures: p['contextFeatures'].map(tupledFeatToDict),
+                contextFeatures: (p['contextFeatures']) ? p['contextFeatures'] : [],
                 mutualFeatures: [],
-                top20ClusterFeatures: p['top20ClusterFeatures'].map(tupledFeatToDict),
+                top20ClusterFeatures: (p['top20ClusterFeatures']) ? p['top20ClusterFeatures'] : []
             }})
 
     }
 }
 
 export function predictSense(word, context, modelName) {
-    return post({data: {word, context, featureType: 'clusterwords'}})
+    return post({data: {word, context, featureType: 'depslm'}})
         .then(response => response.json())
-        //.then(convertLegacyToNew)
+        .then(convertLegacyToNew)
 }

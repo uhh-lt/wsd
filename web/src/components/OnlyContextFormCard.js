@@ -57,14 +57,14 @@ const SingleWordFormCard = React.createClass({
                             required
                             updateImmediately
                             defaultValue={context}
-                            floatingLabelText="Disambiguation Context"
+                            floatingLabelText="Context"
                             floatingLabelFixed={true}
                             fullWidth={true}
                         />
                         <ModelNameDropDownMenu
                             required
                             value={modelName}
-                            floatingLabelText="Model based on"
+                            floatingLabelText="Model"
                             floatingLabelFixed={true}
                             fullWidth={true}
                         />
