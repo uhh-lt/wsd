@@ -13,8 +13,8 @@ const modelDescriptions = {
         text: <span>This model uses the <b>cluster words</b> from the induced <b>word sense inventory</b> as sparse features that represent the sense. This model was induced from a text corpus which is a combination of Wikipedia, ukWaC, LCC News corpus, and Gigaword.</span>,
     },
     'cos_traditional_self': {
-        title: "Super Senses based on Cluster Word Features",
-        text: <span>This representation is based on a sum of <b>word vectors of all cluster words</b> in the induced <b>word sense inventory</b> weighted by distributional similarity scores. This model was induced from a text corpus which is a combination of Wikipedia, ukWaC, LCC News corpus, and Gigaword.</span>,
+        title: "Word Senses based on Cluster Word Features",
+        text: <span>This representation is based on a sum of word vectors of all cluster words in the induced <b>word sense inventory</b> weighted by distributional similarity scores. Word vectors use <b>context words</b> (words that often co-occur in the text corpus with the word) as sparse features. This model was induced from a text corpus which is a combination of Wikipedia, ukWaC, LCC News corpus, and Gigaword.</span>,
     },
     'naivebayes_cosets1k_self': {
         title: "Super Senses based on Context Word Features",
