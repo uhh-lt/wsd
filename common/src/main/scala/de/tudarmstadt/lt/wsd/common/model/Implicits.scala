@@ -40,4 +40,14 @@ object Implicits {
       def apply(rs: ResultSet, col_name: String): Seq[String] = rs.getString(col_name).split(",")
       def apply(rs: ResultSet, col_idx: Int): Seq[String] = rs.getString(col_idx).split(",")
     }
+
+  implicit val positionTypeBinder: TypeBinder[Position] =
+    new TypeBinder[Position] {
+      def apply(rs: ResultSet, col_name: String): Position = Position(rs.getString(col_name))
+      def apply(rs: ResultSet, col_idx: Int): Position = Position(rs.getString(col_idx))
+    }
+
+
+  // TODO really needed?
+  implicit val positionToString: (Position) => String = (pos: Position) => pos.toString
 }

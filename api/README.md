@@ -53,6 +53,15 @@ The `modelName` selects the prediction model. Currently the following
         "words": [
           "sumatra",
           "indonesia"
+        ],
+        "sampleSentences": [
+          {
+            "text": "Java is an island.",
+            "position": {
+              "start": 0,
+              "end": 4
+            }
+          }
         ]
       },
       "confidenceProb": 0.7334364458614677,

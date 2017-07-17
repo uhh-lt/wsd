@@ -7,8 +7,8 @@ import ModelNameDropDownMenu from './ModelNameDropDownMenu'
 import { FormsyText } from 'formsy-material-ui/lib';
 import Formsy from 'formsy-react';
 
-const title = "Input a context and a target word to disambiguate";
-const subtitle = "The system will identify a sense of the target word that best fits the context.";
+const title = "Input a sentence and a target word to disambiguate";
+const subtitle = "The system will identify a sense of the target word that best fits the given sentence.";
 const style = {
     card: {
         marginTop: 4,
@@ -74,7 +74,7 @@ const FormCard = React.createClass({
                             value={modelName}
                             floatingLabelText="Model"
                             floatingLabelFixed={true}
-                            autoWidth={true}
+                            fullWidth={true}
                             style={{minWidth: "450px"}}
                         />
                     </Formsy.Form>

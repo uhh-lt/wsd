@@ -5,6 +5,7 @@ import {grey500} from 'material-ui/styles/colors';
 import {ActionInfoOutline} from "material-ui/svg-icons/index";
 import {IconButton, Popover} from "material-ui";
 import modelDescriptions from "../model-descriptions"
+import FlatButton from 'material-ui/FlatButton';
 
 class ModelNameDropDownMenu extends Component {
 
@@ -42,12 +43,13 @@ class ModelNameDropDownMenu extends Component {
                 display: 'flex',
                 flexDirection: 'row',
             },
-            description: {
+            descriptionButton: {
                 color: grey500,
+                alignSelf: "flex-end",
+                marginLeft: "12px",
             },
             popover : {
                 margin: 20,
-                display: 'inline-block',
                 maxWidth: "300px",
             }
         };
@@ -62,10 +64,11 @@ class ModelNameDropDownMenu extends Component {
                     />
                 )}
             </FormsySelect>
-            <span style={styles.description}>
-                <IconButton onTouchTap={this.handleTouchTap} key="icon">
-                    <ActionInfoOutline color={grey500}/>
-                </IconButton>
+            <span style={styles.descriptionButton}>
+                <FlatButton
+                    onTouchTap={this.handleTouchTap}
+                    icon={<ActionInfoOutline color={grey500}/>}
+                />
                 <Popover
                     key="popover"
                     open={this.state.open}

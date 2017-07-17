@@ -67,6 +67,38 @@ import_db_babelnet_ids() {
     docker exec -it wsd_import_db psql wsp_default -U postgres -c "$sql_cmd"
 }
 
+import_db_sample_sentences() {
+    # Adding babelnet_id column and fill with data:
+    # @See: de.tudarmstadt.lt.wsd.common.model.SampleSentence
+
+    csv_file=data/sample_sentences_traditional_inventory.csv
+
+    docker cp "$csv_file" wsd_import_db:/data.csv
+
+    sql_cmd="""
+    DROP TABLE sample_sentences
+    CREATE TABLE sample_sentences (
+        sentence_id INT,
+        sense_id TEXT,
+        inventory TEXT,
+        sense_position TEXT,
+        sentence TEXT
+    );
+
+    COPY sample_sentences(sentence_id, sense_id, sense_position, sentence)
+        FROM '/data.csv'
+        DELIMITER E'\t'
+        CSV HEADER;
+
+    UPDATE  sample_sentences SET inventory = 'traditional';
+
+    CREATE INDEX sample_sentences_sense_index ON sample_sentences (sense_id, inventory);
+    """
+
+    docker exec -it wsd_db_1 psql wsp_default -U postgres -c "$sql_cmd"
+
+}
+
 build_model() {
 
   mkdir -p /tmp/spark-events

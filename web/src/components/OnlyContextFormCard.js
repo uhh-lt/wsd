@@ -9,7 +9,7 @@ import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 import Formsy from 'formsy-react';
 
 const title = "Input a sentence to disambiguate";
-const subtitle = "The system will identify nouns and named entities and assign senses which best fit the context.";
+const subtitle = "The system will identify nouns and named entities and assign senses which best fit the given sentence.";
 const style = {
     card: {
         marginTop: 4,
@@ -57,7 +57,7 @@ const SingleWordFormCard = React.createClass({
                             required
                             updateImmediately
                             defaultValue={context}
-                            floatingLabelText="Context"
+                            floatingLabelText="Sentence"
                             floatingLabelFixed={true}
                             fullWidth={true}
                         />

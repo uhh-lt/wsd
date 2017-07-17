@@ -2,17 +2,17 @@ package controllers
 
 import de.tudarmstadt.lt.wsd.common.JsonImplicits._
 import play.api.libs.json._
-import play.api.cache
-import de.tudarmstadt.lt.wsd.common._
 import java.net.{URLClassLoader, URLDecoder, URLEncoder}
 import javax.inject._
 
 import com.typesafe.config.ConfigFactory
-import de.tudarmstadt.lt.wsd.common.model.{SenseVector, WordVector => WordVectorModel}
+import de.tudarmstadt.lt.wsd.common.{DetectEntities, Feature, FeatureVectorizer}
+import de.tudarmstadt.lt.wsd.common.model.{SampleSentence, Sense, SenseVector, WordVector => WordVectorModel}
 import play.api.mvc.{Result => MvcResult, _}
 import de.tudarmstadt.lt.wsd.common.prediction.DetailedPredictionPipeline.{Predictions, SingleSensePrediction}
 import de.tudarmstadt.lt.wsd.common.prediction.{DetailedPredictionPipeline, WSDModel}
 import de.tudarmstadt.lt.wsd.common.utils.NLPUtils
+import scalikejdbc._
 
 @Singleton
 class Application @Inject() extends Controller {
@@ -64,7 +64,38 @@ class Application @Inject() extends Controller {
         }
       )
 
-      val jsonResult = Json.toJson(Result(prediction)).transform(addImageUrl)
+      lazy val sentencesPerSense = {
+        val ss = SampleSentence.defaultAlias
+        val buildCondition = (s: Sense) => sqls.eq(ss.sense_id, s.sense_id).and.eq(ss.inventory, s.inventory)
+
+        val parts = prediction.senses.map(_.sense).map(buildCondition)
+        val criteria = parts.foldLeft(sqls""){
+          case (where, part) if where.isEmpty => part
+          case (where, part) => where.or(part)
+        }
+
+        val values = SampleSentence.findAllBy(criteria).groupBy(s => (s.sense_id, s.inventory))
+        values.withDefaultValue(List())
+      }
+
+      val addSampleSentences = (__ \ 'predictions).json.update(
+        __.read[JsArray].map { a =>
+          Json.toJson(a.as[List[JsObject]].map { o =>
+            val senseCluster = (o \ "senseCluster").as[JsObject]
+            val senseId = (senseCluster \ "id").as[String]
+            val inventory = (senseCluster \ "inventory").as[String]
+            val uniqueSenseKey = (senseId, inventory)
+
+            o ++ Json.obj(
+              "senseCluster" -> (senseCluster ++ Json.obj(
+                "sampleSentences" -> sentencesPerSense(uniqueSenseKey)
+              ))
+            )
+          })
+        }
+      )
+
+      val jsonResult = Json.toJson(Result(prediction)).transform(addSampleSentences)
 
       Ok(jsonResult.getOrElse(JsString("Oopps.. an error occurred")))
     }

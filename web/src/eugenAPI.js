@@ -35,6 +35,7 @@ function convertLegacyToNew(json) {
                 ...p,
                 rank: p.rank.toString(),
                 senseCluster: {
+                    sampleSentences: [],
                     ...p.senseCluster,
                     hypernyms: p.senseCluster.hypernyms.map((s) => s.split(":")[0])
                 },

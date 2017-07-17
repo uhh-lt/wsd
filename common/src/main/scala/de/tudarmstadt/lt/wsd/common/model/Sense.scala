@@ -1,8 +1,8 @@
 package de.tudarmstadt.lt.wsd.common.model
 
-import scalikejdbc._
-import skinny.orm.{Alias, SkinnyNoIdCRUDMapper, SkinnyNoIdMapper}
 import de.tudarmstadt.lt.wsd.common.model.Implicits._
+import scalikejdbc._
+import skinny.orm.{Alias, SkinnyNoIdCRUDMapper}
 
 
 case class WeightedWord(word: String, weight: Double) {
@@ -47,6 +47,7 @@ object Sense extends Enumeration with SkinnyNoIdCRUDMapper[Sense] {
   val s: Alias[Sense] = defaultAlias
 
   override def extract(rs: WrappedResultSet, n: scalikejdbc.ResultName[Sense]): Sense = autoConstruct(rs, n)
+
   def findAllByCaseIgnoredWord(word: String)(implicit s: DBSession = autoSession): List[Sense] =
     findAllBy(sqls.eq(sqls"LOWER(${defaultAlias.word})", word.toLowerCase()))
 

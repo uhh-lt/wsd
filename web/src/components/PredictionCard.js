@@ -50,7 +50,7 @@ class PredictionCard extends Component {
             PropTypes.shape({
                 label: PropTypes.string.isRequired,
                 weight: PropTypes.number.isRequired,
-            })
+            }).isRequired
         ).isRequired,
         numClusterFeatures: PropTypes.number.isRequired,
         senseCluster: PropTypes.shape({
@@ -58,7 +58,16 @@ class PredictionCard extends Component {
             lemma: PropTypes.string.isRequired,
             hypernyms: PropTypes.array.isRequired,
             words: PropTypes.array.isRequired,
-            babelnet_id: PropTypes.string
+            babelnet_id: PropTypes.string,
+            sampleSentences: PropTypes.arrayOf(
+                PropTypes.shape({
+                    sentence: PropTypes.string.isRequired,
+                    sense_position: PropTypes.shape({
+                        start: PropTypes.string.isRequired,
+                        end: PropTypes.string.isRequired,
+                    }).isRequired,
+                }).isRequired
+            )
         }).isRequired,
         openFeatureDetails: PropTypes.func.isRequired,
         imagesEnabled: PropTypes.bool.isRequired,
@@ -98,7 +107,7 @@ class PredictionCard extends Component {
         };
 
 
-        const {senseCluster, imagesEnabled, imageUrl, mutualFeatures, openFeatureDetails, top20ClusterFeatures, numClusterFeatures} = this.props;
+        const {senseCluster, imageUrl, mutualFeatures, openFeatureDetails, top20ClusterFeatures, numClusterFeatures} = this.props;
         const onOpenDetails = (label) => openFeatureDetails({feature: label, senseID: senseCluster.id});
 
         const babelNetButton = (
@@ -120,6 +129,10 @@ class PredictionCard extends Component {
                 />
             </CardTextWithTitle>
         );
+        const SampleSentence = ({start, end, text}) =>
+            <ListItem innerDivStyle={{fontSize:"14px", padding:"5px"}} style={{padding:"5px"}}>
+                {text.slice(0, start)}<b>{text.slice(start, end)}</b>{text.slice(end)}
+            </ListItem>;
 
         const sampleSentencesText = (
             <CardTextWithTitle
@@ -127,9 +140,10 @@ class PredictionCard extends Component {
                 title="Sample sentences"
                 expandable={true}>
                 <List>
-                    <ListItem innerDivStyle={{fontSize:"14px", padding:"5px"}} style={{padding:"5px"}}>Lorem ipsum dolor sit amet, <b>consectetur</b> adipiscing elit.</ListItem>
-                    <ListItem innerDivStyle={{fontSize:"14px", padding:"5px"}} style={{padding:"5px"}}>estibulum elementum, metus nec <b>consequat</b> congue, nisi libero imperdiet sem, quis congue diam lorem a nisl.</ListItem>
-                    <ListItem innerDivStyle={{fontSize:"14px", padding:"5px"}} style={{padding:"5px"}}>Donec ut <b>quam</b> sed velit blandit scelerisque nec at purus.</ListItem>
+                    {senseCluster.sampleSentences.map(({sense_position, sentence}) =>
+                        <SampleSentence {...sense_position} text={sentence} />
+                    )}
+
                 </List>
             </CardTextWithTitle>
         );
@@ -139,7 +153,7 @@ class PredictionCard extends Component {
                 expandable={true}
                 key="cluster-words"
                 title="Cluster words"
-                info="estibulum elementum, metus nec consequat congue, nisi libero imperdiet sem, quis congue diam lorem a nisl."
+                info={<span>The cluster words are words that are distributionally related to the ambiguous target word being disambiguated (so-called "second-order" features). In contrast to the distributionally related words obtained with word-based models, such as word2vec, words in a word cluster are densely connected and are usually refer to one sense. In contrast, in word2vec the list of related words can contain a mixture of related words belonging to different senses. For instance, the word "jaguar" has one word cluster that contains words related to animals and another cluster that contains words related to cars. The clusters are obtained using the JoBimText method.</span>}
             >
                 <ChipList
                     labels={senseCluster.words.slice(0,20)}
@@ -152,9 +166,9 @@ class PredictionCard extends Component {
         const contextFeaturesText = (
             <CardTextWithTitle
                 expandable={true}
-                key="context-features"
-                title="Context features"
-                info="estibulum elementum, metus nec consequat congue, nisi libero imperdiet sem, quis congue diam lorem a nisl."
+                key="context-words"
+                title="Context words"
+                info={<span>The context words are words that often co-occur with the ambiguous target word in the given sense (so-called "first-order" features). The context features are specific to word sense, not to a word. They are computed not by simple co-occurrence method, as this would give sense-unaware representations. Instead, we perform aggregation of co-occurrences on the basis on the sense clusters which provides us sense-aware co-occurrence representations. Thus, the sense clusters are used as pivot vocabularies to obtain the sense representations. Note that context word features are much less sparse than the cluster word features.</span>}
             >
                 <FeatureChipList
                     features={top20ClusterFeatures}
@@ -196,9 +210,9 @@ class PredictionCard extends Component {
                         lineHeight: '36px'}}
                 />
                 {(senseCluster.hypernyms.length > 0) ? hypernymText : <span />}
-                {sampleSentencesText}
+                {(senseCluster.sampleSentences.length > 0) ? sampleSentencesText : <span />}
                 {(senseCluster.words.length > 0) ? clusterWordsText : <span />}
-                {(contextFeaturesText.length > 0) ? contextFeaturesText : <span />}
+                {(top20ClusterFeatures.length > 0) ? contextFeaturesText : <span />}
                 {(mutualFeatures.length > 0) ? matchingFeaturesText : <span />}
                 <CardActions>
                     {senseCluster.babelnet_id ? babelNetButton : <span />}

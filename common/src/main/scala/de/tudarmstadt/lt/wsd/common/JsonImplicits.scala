@@ -2,7 +2,7 @@
 package de.tudarmstadt.lt.wsd.common
 
 import breeze.linalg.SparseVector
-import de.tudarmstadt.lt.wsd.common.model.{Sense, SenseVector, WeightedWord}
+import de.tudarmstadt.lt.wsd.common.model._
 import de.tudarmstadt.lt.wsd.common.prediction.DetailedPredictionPipeline.SingleSensePrediction
 import de.tudarmstadt.lt.wsd.common.prediction._
 import play.api.libs.json._
@@ -72,6 +72,15 @@ object JsonImplicits {
       "contextFeatures" -> "", //FIXME prediction.contextFeatures.map(f: String => Feature(f, 1)),
       "top20ClusterFeatures" -> prediction.senseFeatures.filterNot(_.weight.isNaN).sortBy(-_.weight).take(20),
       "numClusterFeatures" -> prediction.senseFeatures.count(!_.weight.isNaN)
+    )
+  }
+
+  implicit val positionWriter: OWrites[Position] = Json.writes[Position]
+
+  implicit val sampleSentence = new Writes[SampleSentence] {
+    def writes(sentence: SampleSentence): JsObject = Json.obj(
+      "sentence" -> sentence.sentence,
+      "sense_position" -> sentence.sense_position
     )
   }
 }
