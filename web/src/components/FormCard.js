@@ -56,7 +56,7 @@ const FormCard = React.createClass({
                             required
                             updateImmediately
                             value={context}
-                            floatingLabelText="Context"
+                            floatingLabelText="Sentence"
                             floatingLabelFixed={true}
                             fullWidth={true}
                         />
