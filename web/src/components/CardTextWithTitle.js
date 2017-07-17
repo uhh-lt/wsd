@@ -53,7 +53,7 @@ class CardTextWithTitle extends Component {
             },
             popover : {
                 margin: 20,
-                display: 'inline-block',
+                maxWidth: "300px",
             }
         };
 
