@@ -64,6 +64,7 @@ class Application @Inject() extends Controller {
         }
       )
 
+      // FIXME remove lazy and handle empty sense list case
       lazy val sentencesPerSense = {
         val ss = SampleSentence.defaultAlias
         val buildCondition = (s: Sense) => sqls.eq(ss.sense_id, s.sense_id).and.eq(ss.inventory, s.inventory)
@@ -95,7 +96,9 @@ class Application @Inject() extends Controller {
         }
       )
 
-      val jsonResult = Json.toJson(Result(prediction)).transform(addSampleSentences)
+      val jsonResult = Json.toJson(Result(prediction))
+        .transform(addSampleSentences)
+        .flatMap(_.transform(addImageUrl))
 
       Ok(jsonResult.getOrElse(JsString("Oopps.. an error occurred")))
     }
