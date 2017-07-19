@@ -260,8 +260,6 @@ object Run extends LazyLogging {
   def mainDownloadImages(frequencyFile: String, maxOpt: Option[Int]): Unit = {
     val max = maxOpt.getOrElse(10)
 
-    import scala.concurrent.ExecutionContext.Implicits.global
-
     implicit val system = ActorSystem()
     implicit val materializer = ActorMaterializer()
     implicit val wsClient = AhcWSClient()
@@ -271,33 +269,33 @@ object Run extends LazyLogging {
 
     println(s"STARTING DOWNLOADS (all senses for maximal $max words)\n")
 
-    val senses = mostFreq.map(word => Future(Sense.findAllByCaseIgnoredWord(word)))
     val downloader = new BingImageDownloader()
 
-    val downloads = senses.map(a => a.map( b => b.map { sense =>
-      println(s"Starting to download image for ${sense.uniqueID}.")
-      val future = downloader.readFromDiskOrDownload(sense)
-      future.onComplete {
-        case Success(url) => println(s"Download for ${sense.uniqueID} completed.")
-        case Failure(exception) => println(s"Download error for ${sense.uniqueID}: $exception\n")
+    val senses = mostFreq.toStream.flatMap(word => Sense.findAllByCaseIgnoredWord(word))
+    val processed = senses.map { sense =>
+
+      println(s"Checking image for ${sense.uniqueID}.")
+
+      val check = downloader.readFromDiskOrDownload(sense)
+
+      import scala.concurrent.ExecutionContext.Implicits.global
+      check.onComplete {
+        case Success(url) => println(s"Successfully ensured image for ${sense.uniqueID} exists.")
+        case Failure(exception) => println(s"Error for ${sense.uniqueID}: $exception\n")
       }
-      future
-    }))
 
-    // Converting List[Future[List[Future[String]]]] to Future
-    val download = Future.sequence(downloads).map(xs => Future.sequence(xs.flatten)).flatMap(identity)
+      check
 
-    download.onComplete {
-      case Success(urls) => println(s"All ${urls.length} downloads finished.\n")
-      case Failure(exception) => println(s"STOPPING DOWNLOADS with: $exception\n")
-    }
+    } take max takeWhile { check =>
+      import scala.concurrent.duration._
+      // https://stackoverflow.com/a/21417522
+      Await.result(check, 1 minutes).nonEmpty
+    } length
 
-    val shutdown = download
-      .andThen { case _ => wsClient.close() }
-      .andThen { case _ => system.terminate() }
+    println(s"$processed senses processed")
 
-    import scala.concurrent.duration._
-    Await.result(shutdown, max * 1 minute)
+    wsClient.close()
+    system.terminate()
   }
 
   def main(args: Array[String]): Unit = {
