@@ -23,7 +23,7 @@ import scala.util.Try
   */
 class BingImageDownloader(baseUrl: String) extends LazyLogging {
 
-  def this() = this("https://api.cognitive.microsoft.com")
+  def  this() = this("https://api.cognitive.microsoft.com")
 
   import de.tudarmstadt.lt.wsd.common.JsonImplicits._
 
@@ -31,7 +31,7 @@ class BingImageDownloader(baseUrl: String) extends LazyLogging {
   private val config = ConfigFactory.load()
   private val apiKey = config.getString("wsd.common.bing.api_key")
   private val imageFolder = config.getString("wsd.common.bing.image_folder")
-  private val apiEndpoint = baseUrl + "/bing/v5.0/images/search" // FIXME: v5.0
+  private val apiEndpoint = baseUrl + "/bing/v5.0/images/search"
 
   def readCache: Map[String, String] = {
     val folders = new File(imageFolder).listFiles().flatMap(_.listFiles).map(_.getCanonicalPath)
@@ -48,16 +48,21 @@ class BingImageDownloader(baseUrl: String) extends LazyLogging {
     // 7 digits see to be enough, in such rare cases where senses have the same ascii name
     MessageDigest.getInstance("MD5").digest(str.getBytes).map("%02X" format _).mkString.take(7)
 
-  private def toAscii: (String) => String = (str: String) =>
-    str.filter(_.toInt < 255)
-
+  private def toAscii: (String) => String = (str: String) => {
+    val alphaNum = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9') ++ List('#', '-')
+    str.flatMap{
+      case c if alphaNum.contains(c) => Some(c)
+      case ' ' => Some('_')
+      case _ => None
+    }
+  }
 
   /**
-    * Create a hierarchical directory structure to avoid to many files in the top
-    * level folder
+    * Create a hierarchical directory structure to avoid too many files in the top
+    * level directory.
     *
-    * Some performance considerations are discussed here, especially the ls command will suffer
-    * form large directories: https://stackoverflow.com/a/7032294
+    * Some performance considerations are discussed in https://stackoverflow.com/a/7032294,
+    * especially the `ls` command will suffer form large directories.
     */
   private def bucketPath(sense: Sense): String = {
 
@@ -102,7 +107,7 @@ class BingImageDownloader(baseUrl: String) extends LazyLogging {
 
   private def readThumbnailUrlFromJson(json: JsValue) =
     (json \ "value").as[Seq[BingPhoto]].headOption.map(_.thumbnailUrl).get
-
+  
   private def readResult(folder: String): (String, String) = {
     val url = readPhotoURLFromFolder(folder)
     val sense = readSenseFromFolder(folder)
