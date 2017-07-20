@@ -29,6 +29,7 @@ lazy val common = (project in file("common")).
   settings(
     name := "wsd-common",
     libraryDependencies ++= commonDeps,
+    test in assembly := {},
     assemblyMergeStrategy in assembly := {
       case PathList("META-INF", "io.netty.versions.properties") => MergeStrategy.first
       case PathList("org", "apache", "commons", "logging", xs @ _*) => MergeStrategy.first
