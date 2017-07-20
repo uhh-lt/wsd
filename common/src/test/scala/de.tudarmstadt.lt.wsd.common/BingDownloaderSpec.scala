@@ -45,7 +45,7 @@ class BingDownloaderSpec extends FlatSpec with BeforeAndAfterEach with ScalaFutu
     weighted_cluster_words=Seq(WeightedWord("word1", 0.2))
   )
 
-  "BingDownloader" should "provide an image url" in {
+  "BingDownloader" should "provide an image path" in {
     Server.withRouter() {
       case GET(p"/bing/v5.0/images/search") => Action {
         Results.Ok(Json.obj("value" -> Json.arr(Json.obj("thumbnailUrl" -> "/test.jpg"))))
@@ -64,10 +64,10 @@ class BingDownloaderSpec extends FlatSpec with BeforeAndAfterEach with ScalaFutu
         val downloader = new BingImageDownloader("")
 
 
-        val urlFuture = downloader.download(sense)(client, system, materializer)
+        val pathFuture = downloader.download(sense)(client, system, materializer)
 
-        whenReady(urlFuture) { url =>
-          assert(url === "/test.jpg")
+        whenReady(pathFuture) { path =>
+          assert(path.endsWith("/thumbnail.jpg"))
         }
 
         val cache = downloader.readCache
