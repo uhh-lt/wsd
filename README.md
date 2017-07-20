@@ -34,7 +34,7 @@ cd wsd
 We provide a ready for use database. To download and prepare the project with this database, you can use the following instructions:
 
 ```bash
-wget http://ltdata1.informatik.uni-hamburg.de/joint/wsd/db.tar.gz
+wget http://ltdata1.informatik.uni-hamburg.de/joint/wsd/20170719_wsd_db.tar
 mkdir pgdata
 tar -xzf db.tar.gz -C pgdata
 # Adjust UID, 999 is the postgres user in the docker container
