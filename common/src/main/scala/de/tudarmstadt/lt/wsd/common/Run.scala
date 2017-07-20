@@ -265,7 +265,7 @@ object Run extends LazyLogging {
     implicit val wsClient = AhcWSClient()
 
     val (_, wordFreqs) = TSVUtils.readWithHeaders(frequencyFile)
-    val mostFreq = wordFreqs.sortBy(-_("freq").toInt).map(_("word")).take(max)
+    val mostFreq = wordFreqs.sortBy(-_("freq").toInt).map(_("word").toLowerCase).distinct
 
     println(s"STARTING DOWNLOADS (all senses for maximal $max words)\n")
 
