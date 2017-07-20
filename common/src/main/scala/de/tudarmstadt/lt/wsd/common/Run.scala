@@ -289,7 +289,7 @@ object Run extends LazyLogging {
     } take max takeWhile { check =>
       import scala.concurrent.duration._
       // https://stackoverflow.com/a/21417522
-      Await.result(check, 1 minutes).nonEmpty
+      Await.ready(check, 1 minutes).value.get.isSuccess
     } length
 
     println(s"$processed senses processed")

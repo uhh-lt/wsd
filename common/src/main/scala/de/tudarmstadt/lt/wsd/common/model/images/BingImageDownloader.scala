@@ -33,7 +33,7 @@ class BingImageDownloader(baseUrl: String) extends LazyLogging {
   private val imageFolder = config.getString("wsd.common.bing.image_folder")
   private val apiEndpoint = baseUrl + "/bing/v5.0/images/search"
 
-  def readCache: Map[String, String] = {
+  def readCache: Map[String, Option[String]] = {
     val folders = new File(imageFolder).listFiles().flatMap(_.listFiles).map(_.getCanonicalPath)
 
     val readEntryFromFolder = (folder: String) => (
@@ -91,34 +91,47 @@ class BingImageDownloader(baseUrl: String) extends LazyLogging {
     Json.parse(content).as[Sense]
   }
 
-  def thumbnailPath(sense: Sense): String = s"${bucketPath(sense)}/thumbnail.jpg"
-  def doesThumbnailExist(sense: Sense): Boolean = new File(thumbnailPath(sense)).exists()
+  private val thumbnailName = "thumbnail.jpg"
+  private val imageNotFoundName = "_IMAGE_NOT_FOUND"
 
-  @deprecated
-  def readPhotoURLFromFolder(folder: String): String = {
-    logger.debug(s"Read image url from $folder")
+  /**
+    * Returns the path to the thumbnail if it exists, otherwise it checks for the _IMAGE_NOT_FOUND
+    * file and returns None if it exists.
+    * If both files do not exist, it throws a FileNotFoundException
+    * @param sense
+    * @return
+    */
+  def readThumbnailPath(sense: Sense): Option[String] = {
+    val thumpnailPath = s"${bucketPath(sense)}/$thumbnailName"
+    val notFoundPath = s"${bucketPath(sense)}/$imageNotFoundName"
+    if (new File(thumpnailPath).exists())
+      Some(thumpnailPath)
+    else if (new File(notFoundPath).exists())
+      None
+    else
+      throw new FileNotFoundException(s"Thumbnail image $thumpnailPath not found (also not found $notFoundPath file)!")
+  }
+
+  private def readPhotoURLFromFolder(folder: String) = {
     val content = FileUtils.readContent(s"$folder/response.json")
     val json = Json.parse(content)
     readThumbnailUrlFromJson(json)
   }
 
-  @deprecated
-  def readPhotoURLFromFolder(sense: Sense): String = readPhotoURLFromFolder(bucketPath(sense))
-
   private def readThumbnailUrlFromJson(json: JsValue) =
-    (json \ "value").as[Seq[BingPhoto]].headOption.map(_.thumbnailUrl).get
-  
-  private def readResult(folder: String): (String, String) = {
+    (json \ "value").as[Seq[BingPhoto]].headOption.map(_.thumbnailUrl)
+
+  private def readResult(folder: String): (String, Option[String]) = {
     val url = readPhotoURLFromFolder(folder)
     val sense = readSenseFromFolder(folder)
     (sense.uniqueID, url)
   }
 
   private def writeResultToDisk(sense: Sense,
-                                       apiRequest: WSRequest,
-                                       apiResponse: WSResponse,
-                                       imageStream: StreamedResponse)
-                                      (implicit s: ActorSystem, m: ActorMaterializer) = {
+                                apiRequest: WSRequest,
+                                apiResponse: WSResponse,
+                                optImageStream: Option[StreamedResponse])
+                               (implicit s: ActorSystem, m: ActorMaterializer) = {
     val folder = bucketPath(sense)
     val future = Future {
       assert(!FileUtils.existsFile(folder), s"Folder for image download '$folder' already exists!")
@@ -128,27 +141,31 @@ class BingImageDownloader(baseUrl: String) extends LazyLogging {
       FileUtils.writeContent(s"$folder/sense.json", Json.toJson(sense).toString())
       FileUtils.writeContent(s"$folder/response.json", apiResponse.body)
     }.flatMap { _ =>
-      // http://doc.akka.io/docs/akka/current/scala/stream/stages-overview.html#file-io-sinks-and-sources
-      val fileSink = FileIO.toPath(new File(s"$folder/thumbnail.jpg").toPath)
+      optImageStream match {
+        case Some(stream) =>
+          // http://doc.akka.io/docs/akka/current/scala/stream/stages-overview.html#file-io-sinks-and-sources
+          val fileSink = FileIO.toPath(new File(s"$folder/thumbnail.jpg").toPath)
+          val inputStream = stream.body.runWith(fileSink)(m)
+          inputStream
 
-      val inputStream = imageStream.body.runWith(fileSink)(m)
-      inputStream
+        case None =>
+          Future { FileUtils.writeContent(s"$folder/$imageNotFoundName", "there has been no image in the response") }
+
+      }
     }
 
     future
   }
 
-  def readFromDiskOrDownload(sense: Sense)(implicit ws: WSClient, s: ActorSystem, m: ActorMaterializer): Future[String] =
+  def readFromDiskOrDownload(sense: Sense)(implicit ws: WSClient, s: ActorSystem, m: ActorMaterializer): Future[Option[String]] =
     Future {
-      if (!doesThumbnailExist(sense))
-        throw new FileNotFoundException(s"Thumbnail image not found: ${thumbnailPath(sense)}")
-      thumbnailPath(sense)
-    }.recoverWith{case e: FileNotFoundException =>
+      readThumbnailPath(sense)
+    }.recoverWith { case e: FileNotFoundException =>
       logger.debug(s"Image for sense ${sense.uniqueID} not found on disk.")
       download(sense)
     }
 
-  def download(sense: Sense)(implicit ws: WSClient, s: ActorSystem, m: ActorMaterializer): Future[String] = {
+  def download(sense: Sense)(implicit ws: WSClient, s: ActorSystem, m: ActorMaterializer): Future[Option[String]] = {
 
     val queryText = getQueryText(sense)
     val request = queryBingAPI(queryText)
@@ -163,16 +180,22 @@ class BingImageDownloader(baseUrl: String) extends LazyLogging {
         )
       }
     } flatMap { response: WSResponse =>
-      val url = readThumbnailUrlFromJson(response.json)
-      getImage(url) flatMap { stream =>
-        stream.headers.status match {
-          case Status.OK =>
-            writeResultToDisk(sense, request, response, stream)
-          case _ @ status => Future.failed(
-            new Exception(s"Downloading image from $url failed with response: ${response.statusText} ($status)")
-          )
+      readThumbnailUrlFromJson(response.json) match {
+        case Some(url) =>
+          getImage(url) flatMap { stream =>
+            stream.headers.status match {
+              case Status.OK =>
+                writeResultToDisk(sense, request, response, Some(stream))
+              case _ @ status => Future.failed(
+                new Exception(s"Downloading image from $url failed with response: ${response.statusText} ($status)")
+              )
+            }
+          } map (_ => readThumbnailPath(sense))
+        case None => Future {
+          writeResultToDisk(sense, request, response, None)
+          None
         }
-      } map (_ => thumbnailPath(sense))
+      }
     }
   }
 

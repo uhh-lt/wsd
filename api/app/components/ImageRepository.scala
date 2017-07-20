@@ -21,8 +21,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 @ImplementedBy(classOf[ReadOrDownloadImageRepository])
 trait ImageRepository {
-  def get(sense: Sense): Future[String]
-  def get(sense: Future[Sense]): Future[String]
+  def get(sense: Sense): Future[Option[String]]
+  def get(sense: Future[Sense]): Future[Option[String]]
 }
 
 @Singleton
@@ -31,7 +31,7 @@ class ReadOrDownloadImageRepository @Inject()(implicit lifecycle: ApplicationLif
                                               system: ActorSystem,
                                               downloader: BingImageDownloader) extends ImageRepository {
 
-  private val cache = new ConcurrentHashMap[String, Future[String]]()
+  private val cache = new ConcurrentHashMap[String, Future[Option[String]]]()
 
   import FunctionConverter._
   // TODO how to create materializer in Play?
@@ -41,13 +41,13 @@ class ReadOrDownloadImageRepository @Inject()(implicit lifecycle: ApplicationLif
     Future.successful(completeAllFutures())
   }
 
-  def get(sense: Sense): Future[String] = safeDownload(sense)
-  def get(sense: Future[Sense]): Future[String] = safeDownload(sense)
+  override def get(sense: Sense): Future[Option[String]] = safeDownload(sense)
+  override def get(sense: Future[Sense]): Future[Option[String]] = safeDownload(sense)
 
-  private def safeDownload(sense: Sense): Future[String] =
+  private def safeDownload(sense: Sense): Future[Option[String]] =
     cache.computeIfAbsent(sense.uniqueID, (key: String) => downloader.readFromDiskOrDownload(sense))
 
-  private def safeDownload(sense: Future[Sense]): Future[String] = sense.flatMap(safeDownload)
+  private def safeDownload(sense: Future[Sense]): Future[Option[String]] = sense.flatMap(safeDownload)
 
   private def completeAllFutures() = {
     import scala.collection.JavaConverters._

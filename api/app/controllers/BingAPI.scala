@@ -23,7 +23,10 @@ class BingAPI @Inject() (repository: ImageRepository) extends Controller {
     val senseID = Try(URLDecoder.decode(encoded_sense_id, "UTF-8"))
     val sense = senseID.flatMap(id => inventory.map(x => Sense.findByInventoryAndId(x, id).get))
     val url = Future.fromTry(sense).flatMap(repository.get)
-    url.map(x => Ok.sendFile(new File(x)))
+    url.map {
+      case Some(x) => Ok.sendFile(new File(x))
+      case None => NotFound
+    }
   }
 
 }
