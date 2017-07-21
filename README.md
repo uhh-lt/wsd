@@ -64,7 +64,7 @@ To start the application:
 - First copy the configuration file: `cp sample-docker-compose.override.yml docker-compose.override.yml`.
 - By changing `docker-compose.override.yml` you can customize the deployment.
 See the [official documentation](https://docs.docker.com/compose/compose-file/) for detailed explanation of this file.
-- Then start the web application with: `./scripts/web_app/start.sh`
+- Then start the web application with: `./scripts/start_web_app.sh`
 
 # Build your own DB
 
