@@ -11,7 +11,7 @@ import de.tudarmstadt.lt.wsd.common.model.{SampleSentence, Sense, SenseVector, W
 import play.api.mvc.{Result => MvcResult, _}
 import de.tudarmstadt.lt.wsd.common.prediction.DetailedPredictionPipeline.{Predictions, SingleSensePrediction}
 import de.tudarmstadt.lt.wsd.common.prediction.{DetailedPredictionPipeline, WSDModel}
-import de.tudarmstadt.lt.wsd.common.utils.NLPUtils
+import de.tudarmstadt.lt.wsd.common.utils.ScalaNLPUtils
 import scalikejdbc._
 
 import scala.util.Try
@@ -24,7 +24,7 @@ class Application @Inject() extends Controller {
   private val config = ConfigFactory.load()
 
   def index = Action {
-    Ok(NLPUtils.toString + " # " +Thread.currentThread().getId())
+    Ok(ScalaNLPUtils.toString + " # " +Thread.currentThread().getId())
   }
 
   def runOnSuccess[T](result: JsResult[T])(block: (T) => MvcResult): MvcResult = {
@@ -115,7 +115,7 @@ class Application @Inject() extends Controller {
         Json.obj(
           "id" -> id,
           "text" -> token,
-          "isEntity" -> JsBoolean(entityName != NLPUtils.OTHER_TAG),
+          "isEntity" -> JsBoolean(entityName != DetectEntities.OTHER_TAG),
           "type" -> entityName
         )
       }

@@ -18,7 +18,12 @@ object Dependencies {
 
   val jackson_core = "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.2"
   val jackson_module = "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.8.2"
+
+  //val logback = "ch.qos.logback" %  "logback-classic" % "1.1.7"
   val scala_logging = "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
+
+  val scalanlp_epic = "org.scalanlp" %% "epic" % "0.3.1" exclude("org.slf4j", "slf4j-simple") excludeAll (ExclusionRule(organization = "com.typesafe.scala-logging"))
+  val scalanlp_epic_models = "org.scalanlp" %% "english"  % "2015.1.25" exclude("org.slf4j", "slf4j-simple") excludeAll (ExclusionRule(organization = "com.typesafe.scala-logging"))
 
   val skinnyVersion = "2.3.6"
   val skinny_orm = "org.skinny-framework" %% "skinny-orm" % skinnyVersion
@@ -56,10 +61,12 @@ object Dependencies {
     config,
     breeze,
     core_nlp, core_nlp_models,
+    scalanlp_epic, scalanlp_epic_models,
     protobuf,
     chill,
     postgres,
     scalatest,
+    //logback,
     scala_logging
   )
 

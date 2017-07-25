@@ -12,41 +12,27 @@ import scala.collection.JavaConversions._
 /**
   * Created by fide on 02.12.16.
   */
-object NLPUtils {
+@deprecated
+object CoreNLPUtils {
   val OTHER_TAG = "O"
   val ORGANIZATION_TAG = "ORGANIZATION"
   val DATE_TAG = "DATE"
 
-  val lemmatizerProps = new Properties()
+  private val lemmatizerProps = new Properties()
   lemmatizerProps.setProperty("annotators", "tokenize, ssplit, pos, lemma")
-  lazy val lemmatizer = new StanfordCoreNLP(lemmatizerProps)
+  private lazy val lemmatizer = new StanfordCoreNLP(lemmatizerProps)
 
 
-  val nerParserProps = new Properties()
+  private val nerParserProps = new Properties()
   nerParserProps.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner")
-  lazy val nerParser = new StanfordCoreNLP(nerParserProps)
+  private lazy val nerParser = new StanfordCoreNLP(nerParserProps)
 
-  val depParserProps = new Properties()
+  private val depParserProps = new Properties()
   depParserProps.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, relation")
-  lazy val depParser = new StanfordCoreNLP(depParserProps)
+  private lazy val depParser = new StanfordCoreNLP(depParserProps)
 
-  val convertToLemmas = convertToLemmasWithStanfordCoreNLP331 _
-  val convertToLemmaPosTuples = convertToLemmasAndPosWithStanfordCoreNLP331 _
-  val convertToJoinedTokensWithNERsTuples = convertToJoinedTokensAndNERsWithStanfordCoreNLP331 _
-
-  def convertToIndexedNERsWithStanfordCoreNLP331(text: String): List[(Int, Int, String)] = {
-    val annotation = new Annotation(text)
-    nerParser.annotate(annotation)
-    val sentence = annotation.get(classOf[SentencesAnnotation]).toList.head
-    val tokens = sentence.get(classOf[TokensAnnotation]).toList
-
-    tokens.foldLeft(List[(Int, Int, String)]()) { case (list, t) =>
-      list match {
-        case (start, end, ner) :: tail if ner == t.ner => (start, t.endPosition(), t.ner) :: tail
-        case _ => (t.beginPosition(), t.endPosition(), t.ner) :: list
-      }
-    }.reverse
-  }
+  val convertToLemmas: (String) => List[String] = convertToLemmasWithStanfordCoreNLP331 _
+  val convertToIndexedNERs: (String) => List[(Int, Int, String)] = convertToIndexedNERsWithStanfordCoreNLP331 _
 
   def convertToTokenIndices(text: String): List[(Int, Int)] = {
     val annotation = new Annotation(text)
@@ -67,18 +53,9 @@ object NLPUtils {
     tokens zip pos map {case (t, p) => (t.beginPosition(), t.endPosition(), p)}
   }
 
-  def mergeTokensToString(text: String, tokens: CoreLabel*): String = {
-    text.substring(tokens.head.beginPosition(), tokens.last.endPosition())
-  }
 
 
-  def convertToJoinedTokensAndNERsWithStanfordCoreNLP331(text: String): List[(String, String)] = {
-    convertToIndexedNERsWithStanfordCoreNLP331(text).map{
-      case (start, end, ner) => (text.substring(start, end), ner)
-    }
-  }
-
-  def convertToLemmasWithStanfordCoreNLP331(text: String): List[String] = {
+  private def convertToLemmasWithStanfordCoreNLP331(text: String): List[String] = {
     //http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf
     val annotation = new Annotation(text)
     lemmatizer.annotate(annotation)
@@ -89,7 +66,36 @@ object NLPUtils {
     lemmas.getOrElse(List.empty[String])
   }
 
-  def convertToLemmasAndPosWithStanfordCoreNLP331(text: String): List[Tuple2[String, String]] = {
+  private def convertToIndexedNERsWithStanfordCoreNLP331(text: String): List[(Int, Int, String)] = {
+    val annotation = new Annotation(text)
+    nerParser.annotate(annotation)
+    val sentence = annotation.get(classOf[SentencesAnnotation]).toList.head
+    val tokens = sentence.get(classOf[TokensAnnotation]).toList
+
+    tokens.foldLeft(List[(Int, Int, String)]()) { case (list, t) =>
+      list match {
+        case (start, end, ner) :: tail if ner == t.ner => (start, t.endPosition(), t.ner) :: tail
+        case _ => (t.beginPosition(), t.endPosition(), t.ner) :: list
+      }
+    }.reverse
+  }
+
+
+  @deprecated
+  private def mergeTokensToString(text: String, tokens: CoreLabel*): String = {
+    text.substring(tokens.head.beginPosition(), tokens.last.endPosition())
+  }
+
+  @deprecated
+  private def convertToJoinedTokensAndNERsWithStanfordCoreNLP331(text: String): List[(String, String)] = {
+    convertToIndexedNERsWithStanfordCoreNLP331(text).map{
+      case (start, end, ner) => (text.substring(start, end), ner)
+    }
+  }
+
+
+  @deprecated
+  private def convertToLemmasAndPosWithStanfordCoreNLP331(text: String): List[Tuple2[String, String]] = {
     //http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf
     val annotation = new Annotation(text)
     lemmatizer.annotate(annotation)
@@ -102,7 +108,8 @@ object NLPUtils {
   }
 
   // FIXME: returns list of null values
-  def convertToDepRelationsWithStanfordCoreNLP331(text: String): List[util.List[Pair[Triple[String, String, String], String]]] = {
+  @deprecated
+  private def convertToDepRelationsWithStanfordCoreNLP331(text: String): List[util.List[Pair[Triple[String, String, String], String]]] = {
     //http://nlp.stanford.edu/pubs/StanfordCoreNlp2014.pdf
     val annotation = new Annotation(text)
     depParser.annotate(annotation)

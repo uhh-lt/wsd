@@ -1,6 +1,6 @@
 package de.tudarmstadt.lt.wsd.common
 
-import de.tudarmstadt.lt.wsd.common.utils.{JoBimTextTSVUtils, NLPUtils, StringUtils, Utils}
+import de.tudarmstadt.lt.wsd.common.utils.{JoBimTextTSVUtils, ScalaNLPUtils, StringUtils, Utils}
 import edu.stanford.nlp.ling.Sentence
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser
 import edu.stanford.nlp.trees.PennTreebankLanguagePack
@@ -19,7 +19,7 @@ object DependencyFeatureExtractor extends FeatureExtractor {
 
   def extractFeatures(context: String, word: String): List[String] = {
     // TODO: actually a word with POS would be needed here
-    val lemmas = NLPUtils.convertToLemmas(context)
+    val lemmas = ScalaNLPUtils.convertToLemmas(context)
 
     val rawWords = Sentence.toCoreLabelList(lemmas: _*)
     val parse = lexParser.apply(rawWords)
@@ -55,7 +55,7 @@ object WordFeatureExtractor extends FeatureExtractor {
 object LemmaFeatureExtractor extends FeatureExtractor {
   def extractFeatures(context: String, word: String): List[String] = {
     val cleanedContext = context.toLowerCase
-    NLPUtils.convertToLemmas(cleanedContext).filter(_ != word.toLowerCase)
+    ScalaNLPUtils.convertToLemmas(cleanedContext).filter(_ != word.toLowerCase)
   }
 }
 

@@ -1,7 +1,7 @@
 package de.tudarmstadt.lt.wsd.common
 
-import de.tudarmstadt.lt.wsd.common.utils.NLPUtils
-import de.tudarmstadt.lt.wsd.common.utils.NLPUtils.{OTHER_TAG, ORGANIZATION_TAG, DATE_TAG}
+import de.tudarmstadt.lt.wsd.common.utils.ScalaNLPUtils
+import de.tudarmstadt.lt.wsd.common.utils.CoreNLPUtils.{OTHER_TAG => CORE_OTHER_TAG}
 import scalikejdbc._
 
 /*
@@ -11,13 +11,15 @@ import scalikejdbc._
 */
 object DetectEntities {
 
-  def get(text: String) = {
-    val mergedEntities = getEntitiesFromStanford(text) ::: getEntitiesFromDB(text) ::: getNounsFromStanford(text)
+  val OTHER_TAG = CORE_OTHER_TAG
+
+  def get(text: String): List[(String, String)] = {
+    val mergedEntities = getEntitiesFromScalaNLP(text) ::: getEntitiesFromDB(text) ::: getNounsFromScalaNLP(text)
     val entities = removeOverlapping(mergedEntities)
     fillIndexGaps(entities).map{case (start, end, ner) => (text.substring(start, end), ner)}
   }
 
-  def fillIndexGaps(entities: List[(Int, Int, String)]) = {
+  def fillIndexGaps(entities: List[(Int, Int, String)]): List[(Int, Int, String)] = {
     var nextStart = 0
 
     entities.flatMap{ case (start, end, ner) =>
@@ -32,7 +34,7 @@ object DetectEntities {
     }
   }
 
-  def removeOverlapping(entities: List[(Int, Int, String)]) = {
+  def removeOverlapping(entities: List[(Int, Int, String)]): List[(Int, Int, String)] = {
     entities.sortBy(_._1).foldLeft(List[(Int, Int, String)]()) { case (list, (s, e, n)) =>
       list match {
         case (start, end, _) :: tail if s > end => (s, e, n) :: list
@@ -47,19 +49,45 @@ object DetectEntities {
     text.substring(tokens.head._1, tokens.last._2)
   }
 
+  /***
+    *
+    */
   def getEntitiesFromDB(text: String)(implicit session: DBSession = null): List[(Int, Int, String)] = {
     DB readOnly { implicit session =>
 
-
       def subsetsShrinkingEnd[T](set: List[T]) = (for (i <- set.indices) yield set.drop(i)).toList
       def subsetsShrinkingBegin[T](set: List[T]) = subsetsShrinkingEnd(set.reverse).map(_.reverse)
+
+      // Build some kind of power set from a list, however the order of elements matters, like this example:
+      // List(My, small, example)
+      // =>
+      // List(
+      //      List(My, small, example),
+      //      List(My, small),
+      //      List(small, example),
+      //      List(My),
+      //      List(example),
+      //      List(small)
+      // )
       def subsetsShrinkingBoth[T](set: List[T]) = subsetsShrinkingEnd(set).flatMap(subsetsShrinkingBegin)
 
-      val indices = NLPUtils.convertToTokenIndices(text)
+      val indices = ScalaNLPUtils.convertToTokenIndices(text).map{ case (start, end, _) => (start, end) }
 
+
+      /* TODO: DELETE
+      lowerText.foldLeft(List((0,0,""))){ case (cur :: prev, char) =>
+        if (char == ' ') {
+          val (_, end, token) = cur
+          // If token is empty we have subsequent
+          val head = if (token.isEmpty) List(cur) else List((end + 2, end + 2,""), cur)
+          head ::: prev
+        } else {
+          val (start, end, token) = cur
+          List((0,0,""))  TODO finish if needed
+        }
+      }
+      */
       val lowerText = text.toLowerCase()
-      val splitted = lowerText.split(" ").toList
-      //val subsets = subsetsShrinkingBoth(splitted).map(_.mkString(" "))
       val subsets = subsetsShrinkingBoth(indices).map(mergeIndicesToString(lowerText, _:_*))
 
       val entities =
@@ -72,15 +100,26 @@ object DetectEntities {
     }
   }
 
-  def getEntitiesFromStanford(text: String) = {
-    val joinedTokens = NLPUtils.convertToIndexedNERsWithStanfordCoreNLP331(text)
-    val ignoredTags = List(OTHER_TAG, ORGANIZATION_TAG, DATE_TAG)
-    joinedTokens.filterNot{case (start, end, entityName) => ignoredTags.contains(entityName)}
+
+  def getEntitiesFromScalaNLP(text: String): List[(Int, Int, String)] = {
+    val joinedTokens = ScalaNLPUtils.convertToIndexedNERs(text)
+    val TAGS = ScalaNLPUtils.TAGS
+    val ignoredTags = List(
+      TAGS.Cardinal,
+      TAGS.Date,
+      TAGS.Money,
+      TAGS.Ordinal,
+      TAGS.Percent,
+      TAGS.OutsideSentence,
+      TAGS.Quantity,
+      TAGS.Time
+    ).map(_.toString)
+
+    joinedTokens.filterNot(x => ignoredTags.contains(x._3))
   }
 
-  def getNounsFromStanford(text: String) = {
-    val posTags = NLPUtils.convertToPOS(text)
+  def getNounsFromScalaNLP(text: String): List[(Int, Int, String)] = {
+    val posTags = ScalaNLPUtils.convertToPOS(text)
     posTags.filter(_._3.startsWith("NN")) // match NN, NNS, NNP
   }
-
 }

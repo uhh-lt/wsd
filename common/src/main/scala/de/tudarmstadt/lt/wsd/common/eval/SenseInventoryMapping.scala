@@ -1,7 +1,7 @@
 package de.tudarmstadt.lt.wsd.common.eval
 
 import com.typesafe.scalalogging.LazyLogging
-import de.tudarmstadt.lt.wsd.common.utils.{NLPUtils, TSVUtils, Utils}
+import de.tudarmstadt.lt.wsd.common.utils.{ScalaNLPUtils, TSVUtils, Utils}
 import de.tudarmstadt.lt.wsd.common.model.{Sense => InternalSense}
 import de.tudarmstadt.lt.wsd.common.prediction.WSDModel
 
@@ -230,7 +230,7 @@ object SenseMapping {
   }
 
   def cleanHypernyms(hypernyms: List[String]): List[String] = {
-    val lemmas = NLPUtils.convertToLemmas(hypernyms.mkString(" ").replace('_', ' ')).map(_.toLowerCase)
+    val lemmas = ScalaNLPUtils.convertToLemmas(hypernyms.mkString(" ").replace('_', ' ')).map(_.toLowerCase)
     Set(lemmas:_*).toList // Remove duplication
   }
 }
