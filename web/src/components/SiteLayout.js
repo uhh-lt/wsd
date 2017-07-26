@@ -69,7 +69,7 @@ const styles = {
 const SiteLayout = ({handleChangeList, handleToggleShowImages, showImages, children}) => (
     <div>
         <AppBar style={styles.appBar}
-                title="Unsupervised & Knowledge-Free & Interpretable Word Sense Disambiguation"
+                title="Unsupervised, Knowledge-Free, and Interpretable Word Sense Disambiguation"
                 showMenuIconButton={false}
         />
         <div style={styles.root}>
