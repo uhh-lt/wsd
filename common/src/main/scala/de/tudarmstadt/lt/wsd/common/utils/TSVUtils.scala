@@ -12,9 +12,15 @@ object TSVUtils {
     override val escapeChar: Char = '元'
   }
 
-  def readWithHeaders(path: String): (List[String], List[Map[String, String]]) = {
+  def readWithHeaders(path: String, removeIncomplete: Boolean = false): (List[String], List[Map[String, String]]) = {
     val reader = CSVReader.open(path)
-    reader.allWithOrderedHeaders()
+    val (headers, rows) = reader.allWithOrderedHeaders()
+    if (removeIncomplete) {
+      val headersSet = headers.toSet
+      (headers, rows.filter(_.keySet == headersSet))
+    } else {
+      (headers, rows)
+    }
   }
 
   def readHeaders(path: String): List[String] = {
