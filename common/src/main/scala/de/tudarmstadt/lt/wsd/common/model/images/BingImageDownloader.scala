@@ -7,7 +7,7 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.FileIO
 import com.typesafe.config.ConfigFactory
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import de.tudarmstadt.lt.wsd.common.model.Sense
 import de.tudarmstadt.lt.wsd.common.utils.FileUtils
 import play.api.http.Status

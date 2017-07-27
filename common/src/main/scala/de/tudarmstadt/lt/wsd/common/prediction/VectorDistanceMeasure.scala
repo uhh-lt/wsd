@@ -2,7 +2,7 @@ package de.tudarmstadt.lt.wsd.common.prediction
 import breeze.linalg.{Vector => BV}
 import Math.{log, exp}
 
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 /**
   * Created by fide on 14.04.17.
   */

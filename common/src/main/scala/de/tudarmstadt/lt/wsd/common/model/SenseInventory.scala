@@ -1,6 +1,6 @@
 package de.tudarmstadt.lt.wsd.common.model
 
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 
 /**
   * Created by fide on 16.04.17.

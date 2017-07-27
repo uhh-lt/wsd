@@ -2,7 +2,7 @@ package de.tudarmstadt.lt.wsd.common.utils
 
 import java.io.FileNotFoundException
 
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import com.typesafe.config.{Config, ConfigRenderOptions}
 
 import scala.util.Random

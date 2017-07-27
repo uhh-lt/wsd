@@ -1,6 +1,6 @@
 package de.tudarmstadt.lt.wsd.common.prediction
 
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import de.tudarmstadt.lt.wsd.common.{FeatureExtractor, FeatureVectorizer, LemmaFeatureExtractor, OnlyDepFromHolingExtractor}
 import de.tudarmstadt.lt.wsd.common.prediction.DetailedPredictionPipeline._
 import de.tudarmstadt.lt.wsd.common.utils.{FileUtils, TSVUtils}

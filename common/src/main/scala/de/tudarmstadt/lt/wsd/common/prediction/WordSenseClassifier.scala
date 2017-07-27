@@ -1,7 +1,7 @@
 package de.tudarmstadt.lt.wsd.common.prediction
 import de.tudarmstadt.lt.wsd.common.model.{SenseInventory, SenseVector, SenseVectorModel}
 import breeze.linalg.{Vector => BV}
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import de.tudarmstadt.lt.wsd.common.prediction.VectorDistanceMeasure.VectorDistanceMeasure
 
 /**

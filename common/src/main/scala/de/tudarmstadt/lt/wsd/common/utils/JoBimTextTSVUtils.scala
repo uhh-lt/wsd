@@ -1,7 +1,7 @@
 package de.tudarmstadt.lt.wsd.common.utils
 
 import StringUtils._
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 
 import scala.util.matching.Regex
 

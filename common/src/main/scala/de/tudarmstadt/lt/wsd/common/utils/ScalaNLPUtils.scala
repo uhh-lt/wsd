@@ -26,20 +26,48 @@ object ScalaNLPUtils {
 
   def convertToLemmas(text: String): List[String] = sentenceSplitter(text).flatMap(tokenizer).toList
 
+  private def tokenWithRealOffsets(text: String): List[(Int, Int, String)] = {
+    val tokens = convertToLemmas(text)
+    val (_, result) = tokens.foldLeft(text, List[(Int, Int, String)]()) {
+      case ((haystack, current), token) =>
+        val offset = current.headOption.map(_._2).getOrElse(0)
+        val start = haystack indexOf token
+        val end = start + token.length
+
+        (haystack.substring(end), current :+ (start + offset, end + offset, token))
+    }
+    result
+  }
+
+  private def epicToRealOffsets(text: String, segments:  List[(Int, Int, String)]):  List[(Int, Int, String)] = {
+    val real = tokenWithRealOffsets(text)
+    segments.map{
+      case (start, end, token) =>
+        val (realStart, _, _) = real(start)
+        val (_, realEnd, _) = real(end-1)
+        (realStart, realEnd, token)
+    }
+  }
+
   def convertToIndexedNERs(text: String): List[(Int, Int, String)] = {
 
     val tokens = sentenceSplitter(text).flatMap(tokenizer)
     val entities = ner.bestSequence(tokens)
 
-    convertSegmentation(entities)
+    val segments = convertSegmentation(entities)
+    epicToRealOffsets(text, segments)
   }
 
   def convertToPOS(text: String): List[(Int, Int, String)] = {
 
     val tokens = sentenceSplitter(text).flatMap(tokenizer)
+
+    // FIXME https://github.com/dlwh/epic/issues/57
     val entities = tagger.bestSequence(tokens)
 
-    convertSegmentation(entities.asSegmentation)
+    val segments = convertSegmentation(entities.asSegmentation)
+
+    epicToRealOffsets(text, segments)
   }
 
   def convertToTokenIndices(text: String): List[(Int, Int, String)] = {
@@ -49,8 +77,6 @@ object ScalaNLPUtils {
 
     tokens.map{ case (span, token) => (span.begin, span.end, token.token)}.toList
   }
-
-
 
   private def convertSegmentation(segmentation: Segmentation[Any, String]) =
     segmentation.segmentsWithOutside.flatMap {

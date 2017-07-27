@@ -1,6 +1,6 @@
 package de.tudarmstadt.lt.wsd.common.eval
 
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import de.tudarmstadt.lt.wsd.common.Run.{logger => _, _}
 import de.tudarmstadt.lt.wsd.common.prediction.DetailedPredictionPipeline._
 import de.tudarmstadt.lt.wsd.common.prediction.WSDModel

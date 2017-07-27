@@ -3,7 +3,7 @@ package de.tudarmstadt.lt.wsd.common.model.images
 import javax.inject.{Inject, Singleton}
 
 import com.typesafe.config.ConfigFactory
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
 

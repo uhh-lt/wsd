@@ -7,7 +7,7 @@ import akka.actor.ActorSystem
 import skinny.Skinny
 import akka.stream.ActorMaterializer
 import com.typesafe.config.{ConfigFactory, ConfigRenderOptions}
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import de.tudarmstadt.lt.wsd.common.eval.{EvaluationStatistics, Evaluator, SenseInventoryMapping}
 import de.tudarmstadt.lt.wsd.common.model.images.BingImageDownloader
 import de.tudarmstadt.lt.wsd.common.model.{Sense, SenseVectorModel}

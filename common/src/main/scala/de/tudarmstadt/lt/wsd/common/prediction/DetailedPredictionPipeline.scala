@@ -1,6 +1,6 @@
 package de.tudarmstadt.lt.wsd.common.prediction
 
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import de.tudarmstadt.lt.wsd.common.model.{Sense, SenseVector}
 import de.tudarmstadt.lt.wsd.common.{Feature, FeatureExtractor, FeatureVectorizer, LemmaFeatureExtractor}
 import breeze.linalg.{Vector => BV}

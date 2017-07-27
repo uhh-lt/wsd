@@ -1,6 +1,6 @@
 package de.tudarmstadt.lt.wsd.common.eval
 
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import de.tudarmstadt.lt.wsd.common.utils.{ScalaNLPUtils, TSVUtils, Utils}
 import de.tudarmstadt.lt.wsd.common.model.{Sense => InternalSense}
 import de.tudarmstadt.lt.wsd.common.prediction.WSDModel

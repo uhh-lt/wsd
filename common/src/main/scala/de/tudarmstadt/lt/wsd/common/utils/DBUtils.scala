@@ -1,7 +1,7 @@
 package de.tudarmstadt.lt.wsd.common.utils
 
 import com.typesafe.config.ConfigFactory
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 
 object DBUtils extends LazyLogging{
 

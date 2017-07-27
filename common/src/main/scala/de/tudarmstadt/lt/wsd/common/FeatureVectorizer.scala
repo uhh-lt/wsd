@@ -1,7 +1,7 @@
 package de.tudarmstadt.lt.wsd.common
 
 import breeze.linalg.{SparseVector, Vector => BV}
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import de.tudarmstadt.lt.wsd.common.model.{IndexedFeature, WordVector}
 
 object FeatureVectorizer extends LazyLogging {
