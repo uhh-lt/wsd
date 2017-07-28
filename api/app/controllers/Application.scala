@@ -14,6 +14,8 @@ import de.tudarmstadt.lt.wsd.common.prediction.{DetailedPredictionPipeline, WSDM
 import de.tudarmstadt.lt.wsd.common.utils.NLPUtils
 import scalikejdbc._
 
+import scala.util.Try
+
 @Singleton
 class Application @Inject() extends Controller {
   import Implicits._
@@ -146,21 +148,34 @@ class Application @Inject() extends Controller {
 
     SenseVector.findByModelAndId(model.sense_vector_model, senseID) match {
 
-      case Some(cluster) =>
-        val wordVectors = cluster.sense.cluster_words.flatMap{ w =>
+      case Some(sense) =>
+
+        val wordVectors = sense.sense.cluster_words.flatMap{ w =>
           WordVectorModel.findByModelAndWord(model.word_vector_model, w)}
 
-        val clusterFeatureWeights = wordVectors.map{ v =>
+        val featureWeightInWordVector = wordVectors.map{ v =>
           (v.word, vectorizer.doUnvectorize(v.vector).find(_.label == feature))
         }.filter(_._2.nonEmpty)
 
-        val wordWeights = cluster.sense.cluster_words.map((_, -1.0)).toMap
-        // FIXME val wordWeights = cluster.sense.weighted_words.toMap
+        val clusterWordWeights = sense.sense.weighted_cluster_words
+          .map(x => (x.word, x.weight)).toMap
 
-        val clusterFeatures = clusterFeatureWeights.toList.map{
+        val normalizationFactor = featureWeightInWordVector.map {
+          case (word, Some(Feature(_, wordVectorFeatureWeight))) => wordVectorFeatureWeight * clusterWordWeights(word)
+        }.sum
+
+
+        val clusterFeatures = featureWeightInWordVector.toList.map {
           case (word, Some(Feature(_, featureWeight))) =>
-            ClusterWordFeature(word, wordWeights(word), featureWeight)
-        }
+
+            val weightContribution = clusterWordWeights(word) * featureWeight / normalizationFactor
+
+            FeatureContribution(
+              clusterWord = word,
+              weightContribution = weightContribution
+            )
+        }.sortBy(-_.weightContribution)
+
         val details = FeatureDetails(senseID, feature, clusterFeatures)
         Ok(Json.toJson(details))
 
@@ -176,14 +191,11 @@ case class WordVector(word: String, features: List[Feature])
 case class FeatureDetails(
   senseID: String,
   feature: String,
-  clusterFeatures: List[ClusterWordFeature])
+  clusterFeatures: List[FeatureContribution])
 
-case class ClusterWordFeature(
+case class FeatureContribution(
   clusterWord: String,
-  clusterWordWeight: Double,
-  featureWeight: Double)
-
-
+  weightContribution: Double)
 
 case class Result(
    context: String,

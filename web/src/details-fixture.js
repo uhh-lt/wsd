@@ -1,7 +1,7 @@
 const details = {
     "senseID": "run#0",
     "feature": "stallion",
-    "clusterFeatures": [{"clusterWord": "ride", "clusterWordWeight": 0.037, "featureWeight": 0.6446465875001876}]
+    "clusterFeatures": [{"clusterWord": "ride", "weightContribution": 0.037}]
 };
 
 export default details;

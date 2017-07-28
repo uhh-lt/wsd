@@ -8,7 +8,7 @@ object Implicits {
   implicit val detectEntitiesQueryReads: Reads[DetectEntitiesQuery] = Json.reads[DetectEntitiesQuery]
   implicit val resultWrites: OWrites[Result] = Json.writes[Result]
   implicit val wordVectorWrites: OWrites[WordVector] = Json.writes[WordVector]
-  implicit val clusterWordFeatureWrites: OWrites[ClusterWordFeature] = Json.writes[ClusterWordFeature]
+  implicit val clusterWordFeatureWrites: OWrites[FeatureContribution] = Json.writes[FeatureContribution]
   implicit val featureDetailsWrites: OWrites[FeatureDetails] = Json.writes[FeatureDetails]
 
 }

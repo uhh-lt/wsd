@@ -6,8 +6,7 @@ const FeatureDetailTable = ({clusterFeatures}) => (
         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
             <TableRow>
                 <TableHeaderColumn>Cluster Word</TableHeaderColumn>
-                <TableHeaderColumn>Cluster Word Weight</TableHeaderColumn>
-                <TableHeaderColumn>Feature Weight</TableHeaderColumn>
+                <TableHeaderColumn>Contribution</TableHeaderColumn>
             </TableRow>
         </TableHeader>
         <TableBody displayRowCheckbox={false}>{
@@ -15,8 +14,7 @@ const FeatureDetailTable = ({clusterFeatures}) => (
                 return (
                     <TableRow key={f.clusterWord}>
                         <TableRowColumn>{f.clusterWord}</TableRowColumn>
-                        <TableRowColumn>{f.clusterWordWeight}</TableRowColumn>
-                        <TableRowColumn>{f.featureWeight}</TableRowColumn>
+                        <TableRowColumn>{(f.weightContribution*100).toFixed(2)} %</TableRowColumn>
                     </TableRow>
                 );
             })
