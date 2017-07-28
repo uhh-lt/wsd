@@ -16,8 +16,11 @@ import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
 import {ALL_WORD_URL_PATH} from "../apppaths";
 import {SINGLE_WORD_URL_PATH} from "../apppaths";
 
-const SelectableList = makeSelectable(List);
+import FontIcon from 'material-ui/FontIcon';
+import IconButton from 'material-ui/IconButton';
 
+
+const SelectableList = makeSelectable(List);
 const styles = {
     appBar: {
         position: 'fixed',
@@ -99,12 +102,11 @@ const SiteLayout = ({handleChangeList, handleToggleShowImages, showImages, child
             <Divider />
             <SelectableList
                 value=""
-                onChange={(event, value) => { window.location = value; }}
             >
                 <Subheader>Resources</Subheader>
-                <ListItem primaryText="Original Paper" value="TODO"/>
-                <ListItem primaryText="Source Code" value="https://github.com/uhh-lt/wsd" />
-                <ListItem primaryText="About" value="http://jobimtext.org/wsd" />
+                <ListItem target="_blank" primaryText="Original Paper" href="http://TODO"/>
+                <ListItem target="_blank" primaryText="Source Code" href="https://github.com/uhh-lt/wsd" />
+                <ListItem target="_blank" primaryText="About" href="http://jobimtext.org/wsd" />
             </SelectableList>
         </Drawer>
 
@@ -116,6 +118,9 @@ const SiteLayout = ({handleChangeList, handleToggleShowImages, showImages, child
                 </a>
                 {' at the University of Hamburg.'}
             </p>
+            <p><IconButton iconStyle={{color: lightWhite}} iconClassName="muidocs-icon-custom-github" href="https://github.com/uhh-lt/wsd" /></p>
+
+
         </FullWidthSection>
     </div>
 );
