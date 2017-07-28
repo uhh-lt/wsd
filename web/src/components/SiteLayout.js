@@ -104,7 +104,7 @@ const SiteLayout = ({handleChangeList, handleToggleShowImages, showImages, child
                 value=""
             >
                 <Subheader>Resources</Subheader>
-                <ListItem target="_blank" primaryText="Original Paper" href="http://TODO"/>
+                <ListItem target="_blank" primaryText="Original Paper" href="https://arxiv.org/abs/1707.06878"/>
                 <ListItem target="_blank" primaryText="Source Code" href="https://github.com/uhh-lt/wsd" />
                 <ListItem target="_blank" primaryText="About" href="http://jobimtext.org/wsd" />
             </SelectableList>
