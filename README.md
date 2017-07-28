@@ -7,13 +7,12 @@ A software to construct and visualize Word Sense Disambiguation models based on 
 ```latex
 @inproceedings{Panchenko:17:emnlp,
   author    = {Panchenko, Alexander and Marten, Fide and Ruppert, Eugen and Faralli, Stefano  and Ustalov, Dmitry and Ponzetto, Simone Paolo and Biemann, Chris},
-  title     = {{Watset: Automatic Induction of Synsets from a Graph of Synonyms}},
-  booktitle = {Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
+  title     = {{Unsupervised, Knowledge-Free, and Interpretable Word Sense Disambiguation}},
+  booktitle = {In Proceedings of the the Conference on Empirical Methods on Natural Language Processing (EMNLP 2017)},
   year      = {2017},
-  address   = {Vancouver, Canada},
+  address   = {Copenhagen, Denmark},
   publisher = {Association for Computational Linguistics},
-  language  = {english},
-  note      = {Accepted for publication.}
+  language  = {english}
 }
 ```
 
