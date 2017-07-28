@@ -1,16 +1,14 @@
 import React, { Component, PropTypes } from 'react'
-import {Card, CardTitle, CardText} from 'material-ui/Card';
-import {cyan100, purple100, blue100} from 'material-ui/styles/colors';
+import {Card} from 'material-ui/Card';
+import {cyan100, purple100, blue100, grey500} from 'material-ui/styles/colors';
 import ChipList, {FeatureChipList} from './ChipList'
 import {Avatar, CardActions, CardHeader, List, ListItem} from "material-ui";
 import FlatButton from 'material-ui/FlatButton';
 import BabelNetIcon from "./BabelNetIcon";
 
-import Badge from 'material-ui/Badge';
-import IconButton from 'material-ui/IconButton';
 import {ActionInfoOutline, NavigationExpandLess, NavigationExpandMore} from "material-ui/svg-icons/index";
-import {grey500} from 'material-ui/styles/colors';
 import CardTextWithTitle from "./CardTextWithTitle";
+import featureDescription from "../feature-descriptions";
 
 
 
@@ -37,8 +35,17 @@ class PredictionCard extends Component {
 
 
     static propTypes = {
+        targetWord: PropTypes.string.isRequired,
         rank: PropTypes.string.isRequired,
         simScore: PropTypes.number.isRequired,
+        model: PropTypes.shape({
+            name: PropTypes.string.isRequired,
+            classifier: PropTypes.string.isRequired,
+            sense_inventory_name: PropTypes.string.isRequired,
+            word_vector_model: PropTypes.string.isRequired,
+            sense_vector_model: PropTypes.string.isRequired,
+            is_super_sense_inventory: PropTypes.bool.isRequired,
+        }).isRequired,
         confidenceProb: PropTypes.number.isRequired,
         mutualFeatures: PropTypes.arrayOf(
             PropTypes.shape({
@@ -74,21 +81,25 @@ class PredictionCard extends Component {
         imageUrl: PropTypes.string
     };
 
-    getTitle(data) {
-        const {rank, senseCluster} = this.props;
+    getTitle() {
+        const {targetWord, rank, senseCluster, model} = this.props;
         const lemma = senseCluster.lemma;
         const position = (parseInt(rank, 10) + 1);
         const mainHypernym = senseCluster.hypernyms[0];
-        return `${position}. ${lemma} (${mainHypernym})`;
+
+        return <div>
+            {position}. {(model.is_super_sense_inventory) ? <span style={{color:grey500}}>{targetWord}</span> : lemma} ({mainHypernym})
+            <span style={{color:grey500}}><i> – {(model.is_super_sense_inventory) ? "Super Sense" : "Word Sense"}</i></span>
+        </div>;
     }
 
     getSubtitle() {
-        const {simScore, confidenceProb, senseCluster} = this.props;
+        const {simScore, confidenceProb, senseCluster, model} = this.props;
         const score = simScore.toPrecision(3);
         const prob = (confidenceProb * 100).toFixed(2);
         const id = senseCluster.id;
         const babelnet_id = senseCluster.babelnet_id ? senseCluster.babelnet_id : "None";
-        return `Similarity score: ${score} / Confidence: ${prob}% / Sense ID: ${id} / BabelNet ID: ${babelnet_id}`;
+        return `Similarity score: ${score} / Confidence: ${prob}% / Sense Features: ${featureDescription[model.word_vector_model]} / ${(model.is_super_sense_inventory) ? "Super" : "Word"} Sense ID: ${id} / BabelNet ID: ${babelnet_id}`;
     }
 
 
@@ -107,7 +118,7 @@ class PredictionCard extends Component {
         };
 
 
-        const {senseCluster, imageUrl, mutualFeatures, openFeatureDetails, top20ClusterFeatures, numClusterFeatures} = this.props;
+        const {senseCluster, model, imageUrl, mutualFeatures, openFeatureDetails, top20ClusterFeatures, numClusterFeatures} = this.props;
         const onOpenDetails = (label) => openFeatureDetails({feature: label, senseID: senseCluster.id});
 
         const babelNetButton = (
@@ -212,7 +223,7 @@ class PredictionCard extends Component {
                 {(senseCluster.hypernyms.length > 0) ? hypernymText : <span />}
                 {(senseCluster.sampleSentences.length > 0) ? sampleSentencesText : <span />}
                 {(senseCluster.words.length > 0) ? clusterWordsText : <span />}
-                {(top20ClusterFeatures.length > 0) ? contextFeaturesText : <span />}
+                {(model.word_vector_model === "coocwords"  && top20ClusterFeatures.length > 0) ? contextFeaturesText : <span />}
                 {(mutualFeatures.length > 0) ? matchingFeaturesText : <span />}
                 <CardActions>
                     {senseCluster.babelnet_id ? babelNetButton : <span />}

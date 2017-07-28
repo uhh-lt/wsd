@@ -60,10 +60,21 @@ object JsonImplicits {
   implicit val weightedWordWrite: OWrites[WeightedWord] = Json.writes[WeightedWord]
   implicit val senseWrites: OWrites[Sense] = Json.writes[Sense]
 
+  implicit val wsdModelWrites = new Writes[WSDModel] {
+    def writes(model: WSDModel): JsObject = Json.obj(
+      "name" -> model.toString,
+      "classifier" -> model.classifier.toString,
+      "sense_inventory_name" -> model.sense_inventory.toString,
+      "word_vector_model" -> model.word_vector_model.toString,
+      "sense_vector_model" -> model.sense_vector_model.toString,
+      "is_super_sense_inventory" -> JsBoolean(model.isInventoryCoSet)
+    )
+  }
 
   implicit val predictionWriter = new Writes[SingleSensePrediction] {
     def writes(prediction: SingleSensePrediction): JsObject = Json.obj(
       "senseCluster" -> prediction.sense,
+      "model" -> prediction.model,
       "simScore" -> prediction.score,
       "rank" -> prediction.rank.toString,
       "confidenceProb" -> prediction.confidence,

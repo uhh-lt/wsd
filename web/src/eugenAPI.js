@@ -34,6 +34,14 @@ function convertLegacyToNew(json) {
             return {
                 ...p,
                 rank: p.rank.toString(),
+                model: {
+                    name: "external_model_depslm",
+                    classifier: "unknown",
+                    sense_inventory_name: "traditional",
+                    word_vector_model: "depsml",
+                    sense_vector_model : "unknown",
+                    is_super_sense_inventory: false
+                },
                 senseCluster: {
                     sampleSentences: [],
                     ...p.senseCluster,

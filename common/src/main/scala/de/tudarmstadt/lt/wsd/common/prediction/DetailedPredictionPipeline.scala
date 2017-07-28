@@ -138,6 +138,7 @@ object DetailedPredictionPipeline {
         case (Seq(sense, score, mutFeats, senseFeats), rank) =>
           SingleSensePrediction(
             sense = sense.asInstanceOf[SenseVector],
+            model = model,
             score = score.asInstanceOf[Double],
             mutualFeatures = mutFeats.asInstanceOf[Seq[Feature]],
             senseFeatures = senseFeats.asInstanceOf[Seq[Feature]],
@@ -165,6 +166,7 @@ object DetailedPredictionPipeline {
 
   case class SingleSensePrediction(
     sense: SenseVector,
+    model: WSDModel,
     score: Double,
     mutualFeatures: Seq[Feature],
     senseFeatures: Seq[Feature],

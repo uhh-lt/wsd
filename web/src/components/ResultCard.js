@@ -31,19 +31,20 @@ const lemmatizationWarning = (originalWord, lemma) =>
         No senses were found for '{originalWord}', showing prediction instead for '{lemma}'.
     </CardText>;
 
-const predictionCard = (prediction, openFeatureDetails, imagesEnabled) =>
+const predictionCard = (targetWord, prediction, openFeatureDetails, imagesEnabled) =>
     <PredictionCard
         {...prediction}
+        targetWord={targetWord}
         key={prediction.rank}
         imagesEnabled={imagesEnabled}
         openFeatureDetails={openFeatureDetails}
     />;
 
-const PredictionCards = ({showAll, predictions, openFeatureDetails, onShowAll, imagesEnabled}) =>
+const PredictionCards = ({showAll, targetWord, predictions, openFeatureDetails, onShowAll, imagesEnabled}) =>
     showAll
-        ? <div>{predictions.map(p => predictionCard(p, openFeatureDetails, imagesEnabled))}</div>
+        ? <div>{predictions.map(p => predictionCard(targetWord, p, openFeatureDetails, imagesEnabled))}</div>
         : <div>
-            {predictionCard(predictions[0], openFeatureDetails, imagesEnabled)}
+            {predictionCard(targetWord, predictions[0], openFeatureDetails, imagesEnabled)}
             <div style={styles.buttonContainer}>
                 <div style={styles.buttonElement}>
                     <FloatingActionButton onTouchTap={onShowAll}>
@@ -106,6 +107,7 @@ class ResultCard extends Component {
                 <CardText>{predictions.length > 0
                     ? <PredictionCards
                         showAll={this.state.showAll}
+                        targetWord={word}
                         predictions={predictions}
                         openFeatureDetails={openFeatureDetails}
                         imagesEnabled={imagesEnabled}
