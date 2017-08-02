@@ -1,7 +1,20 @@
 # Unsupervised Knowledge Free Word Sense Disambiguation
 
-A software to construct and visualize Word Sense Disambiguation models based on [JoBimText models](http://ltmaggie.informatik.uni-hamburg.de/jobimtext/).
+A software to construct and visualize Word Sense Disambiguation models based on [JoBimText models](http://ltmaggie.informatik.uni-hamburg.de/jobimtext/). This project implements the method described in the following paper, please cite it if you use the paper in a research project:
 
+* Panchenko A., Marten F., Ruppert E.,  Faralli S., Ustalov D., Ponzetto S.P., Biemann C. [Unsupervised, Knowledge-Free, and Interpretable Word Sense Disambiguation](https://arxiv.org/abs/1707.06878). In Proceedings of the the Conference on Empirical Methods on Natural Language Processing (EMNLP 2017). 2017. Copenhagen, Denmark. Association for Computational Linguistics
+
+```latex
+@inproceedings{Panchenko:17:emnlp,
+  author    = {Panchenko, Alexander and Marten, Fide and Ruppert, Eugen and Faralli, Stefano  and Ustalov, Dmitry and Ponzetto, Simone Paolo and Biemann, Chris},
+  title     = {{Unsupervised, Knowledge-Free, and Interpretable Word Sense Disambiguation}},
+  booktitle = {In Proceedings of the the Conference on Empirical Methods on Natural Language Processing (EMNLP 2017)},
+  year      = {2017},
+  address   = {Copenhagen, Denmark},
+  publisher = {Association for Computational Linguistics},
+  language  = {english}
+}
+```
 
 This project consists of multiple subprojects: 
 
