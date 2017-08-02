@@ -7,7 +7,7 @@ import FlatButton from 'material-ui/FlatButton';
 
 const FeatureDetailDialog = ({open, onRequestClose, details, isFetching, senseID, feature, isSuperSense}) =>
     <Dialog modal={false} open={open}  onRequestClose={onRequestClose} title={
-        <div>Cluster Words of the {(isSuperSense) ? "Super Sense": "Word Sense" } <i>{senseID}</i> that contributed to the feature "<i>{feature}</i>"</div>
+        <div>Cluster words of the {(isSuperSense) ? "super sense": "word sense" } <b>{senseID}</b> that contributed to the feature <b>{feature}</b></div>
     } actions={<FlatButton
         label="Close"
         primary={true}

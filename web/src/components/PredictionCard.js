@@ -99,7 +99,7 @@ class PredictionCard extends Component {
         const prob = (confidenceProb * 100).toFixed(2);
         const id = senseCluster.id;
         const babelnet_id = senseCluster.babelnet_id ? senseCluster.babelnet_id : "None";
-        return `Similarity score: ${score} / Confidence: ${prob}% / Sense Features: ${featureDescription[model.word_vector_model]} / ${(model.is_super_sense_inventory) ? "Super" : "Word"} Sense ID: ${id} / BabelNet ID: ${babelnet_id}`;
+        return `Confidence: ${prob}% / Features: ${featureDescription[model.word_vector_model]} / ${(model.is_super_sense_inventory) ? "Super" : "Word"} Sense ID: ${id} / BabelNet ID: ${babelnet_id}`;
     }
 
 
@@ -174,6 +174,10 @@ class PredictionCard extends Component {
             </CardTextWithTitle>
         );
 
+        const NoFeatures = <span>
+
+        </span>
+
         const contextFeaturesText = (
             <CardTextWithTitle
                 expandable={true}
@@ -181,12 +185,16 @@ class PredictionCard extends Component {
                 title="Context words"
                 info={<span>The context words are words that often co-occur with the ambiguous target word in the given sense (so-called "first-order" features). The context features are specific to word sense, not to a word. They are computed not by simple co-occurrence method, as this would give sense-unaware representations. Instead, we perform aggregation of co-occurrences on the basis on the sense clusters which provides us sense-aware co-occurrence representations. Thus, the sense clusters are used as pivot vocabularies to obtain the sense representations. Note that context word features are much less sparse than the cluster word features.</span>}
             >
-                <FeatureChipList
-                    features={top20ClusterFeatures}
-                    totalNum={numClusterFeatures}
-                    color={blue100}
-                    onOpenDetails={onOpenDetails}
-                />
+                { (top20ClusterFeatures.length > 0)
+                    ? <FeatureChipList
+                        features={top20ClusterFeatures}
+                        totalNum={numClusterFeatures}
+                        color={blue100}
+                        onOpenDetails={onOpenDetails}
+                    />
+                    : <NoFeatures />
+                }
+
             </CardTextWithTitle>
         );
 
@@ -224,7 +232,7 @@ class PredictionCard extends Component {
                 {(senseCluster.sampleSentences.length > 0) ? sampleSentencesText : <span />}
                 {(senseCluster.words.length > 0) ? clusterWordsText : <span />}
                 {(model.word_vector_model === "coocwords"  && top20ClusterFeatures.length > 0) ? contextFeaturesText : <span />}
-                {(mutualFeatures.length > 0) ? matchingFeaturesText : <span />}
+                {matchingFeaturesText}
                 <CardActions>
                     {senseCluster.babelnet_id ? babelNetButton : <span />}
                     {(!this.state.expanded)
