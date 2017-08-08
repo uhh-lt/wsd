@@ -3,6 +3,7 @@ package de.tudarmstadt.lt.wsd.common.utils
 import java.util
 import java.util.Properties
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import epic.ontonotes.NerType
 import epic.preprocess.MLSentenceSegmenter
 import epic.sequences.Segmentation
@@ -14,7 +15,7 @@ import scala.collection.JavaConversions._
 /**
   * Created by fide on 02.12.16.
   */
-object ScalaNLPUtils {
+object ScalaNLPUtils extends LazyLogging {
   val TAGS = NerType
 
   private lazy val sentenceSplitter = MLSentenceSegmenter.bundled().get
@@ -28,25 +29,50 @@ object ScalaNLPUtils {
 
   private def tokenWithRealOffsets(text: String): List[(Int, Int, String)] = {
     val tokens = convertToLemmas(text)
-    val (_, result) = tokens.foldLeft(text, List[(Int, Int, String)]()) {
-      case ((haystack, current), token) =>
-        val offset = current.headOption.map(_._2).getOrElse(0)
-        val start = haystack indexOf token
-        val end = start + token.length
 
-        (haystack.substring(end), current :+ (start + offset, end + offset, token))
+    val startElement = (text, List[(Int, Int, String)]())
+
+    val result = tokens.foldLeft(startElement) {
+      case ((haystack, current), token) =>
+
+        val relStart = haystack indexOf token
+        assert(relStart != -1, s"'$token' not found in '$haystack'!")
+        val relEnd = relStart + token.length
+
+        val newHaystack = haystack.substring(relEnd)
+        val offset = current.headOption.map(_._2).getOrElse(0)
+        val start = offset + relStart
+        val end = offset + relEnd
+
+        (newHaystack, (start, end, token) :: current)
+
+    } match {
+      case (_, invertedResult) => invertedResult.reverse
     }
+
+    logger.debug("tokenWithRealOffsets: \n" +
+      s"TOKENS: ${tokens.mkString(" // ")}\n" +
+      s"RESULT: ${result.mkString(" // ")}\n"
+    )
     result
   }
 
   private def epicToRealOffsets(text: String, segments:  List[(Int, Int, String)]):  List[(Int, Int, String)] = {
     val real = tokenWithRealOffsets(text)
-    segments.map{
+    val result = segments.map {
       case (start, end, token) =>
         val (realStart, _, _) = real(start)
-        val (_, realEnd, _) = real(end-1)
+        val (_, realEnd, _) = real(end - 1)
         (realStart, realEnd, token)
+
     }
+    val logCallerName = Thread.currentThread.getStackTrace()(2).getMethodName
+    logger.debug(s"$logCallerName:\n" +
+      "SEGMENTS: " + segments.mkString(" ") + "\n" +
+      "REAL: " + real.mkString(" ") + "\n" +
+      "RESULT: " + result.mkString(" ")
+    )
+    result
   }
 
   def convertToIndexedNERs(text: String): List[(Int, Int, String)] = {
@@ -55,6 +81,7 @@ object ScalaNLPUtils {
     val entities = ner.bestSequence(tokens)
 
     val segments = convertSegmentation(entities)
+
     epicToRealOffsets(text, segments)
   }
 

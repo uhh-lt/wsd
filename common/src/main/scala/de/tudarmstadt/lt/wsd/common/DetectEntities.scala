@@ -1,5 +1,6 @@
 package de.tudarmstadt.lt.wsd.common
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import de.tudarmstadt.lt.wsd.common.utils.ScalaNLPUtils
 import de.tudarmstadt.lt.wsd.common.utils.CoreNLPUtils.{OTHER_TAG => CORE_OTHER_TAG}
 import scalikejdbc._
@@ -9,20 +10,27 @@ import scalikejdbc._
   @See scripts/build_toy_model.sh or scripts/build_toy_model.sh function import_db_entities()
 
 */
-object DetectEntities {
+object DetectEntities extends LazyLogging {
 
   val OTHER_TAG = CORE_OTHER_TAG
 
   def get(text: String): List[(String, String)] = {
     val mergedEntities = getEntitiesFromScalaNLP(text) ::: getEntitiesFromDB(text) ::: getNounsFromScalaNLP(text)
+
     val entities = removeOverlapping(mergedEntities)
-    fillIndexGaps(entities).map{case (start, end, ner) => (text.substring(start, end), ner)}
+    val filled = fillIndexGaps(entities, text.length).map{case (start, end, ner) => (text.substring(start, end), ner)}
+    logger.debug("GET ENTITIES:\n"+
+      "ALL: " + mergedEntities.mkString(" // ") + "\n" +
+      "NO OVERLAPPING:\n" + entities.mkString(" // ") + "\n" +
+      "FILLED:\n" + filled.mkString(" // ")
+    )
+    filled
   }
 
-  def fillIndexGaps(entities: List[(Int, Int, String)]): List[(Int, Int, String)] = {
+  def fillIndexGaps(entities: List[(Int, Int, String)], last: Int): List[(Int, Int, String)] = {
     var nextStart = 0
 
-    entities.flatMap{ case (start, end, ner) =>
+    val filled = entities.flatMap{ case (start, end, ner) =>
       val beforeStart = start - 1
       val result = if (nextStart < beforeStart) {
         List((nextStart, beforeStart, OTHER_TAG), (start, end, ner))
@@ -32,6 +40,11 @@ object DetectEntities {
       nextStart = end + 1
       result
     }
+
+    if (nextStart < last)
+      filled :::  List((nextStart, last, OTHER_TAG))
+    else
+      filled
   }
 
   def removeOverlapping(entities: List[(Int, Int, String)]): List[(Int, Int, String)] = {
