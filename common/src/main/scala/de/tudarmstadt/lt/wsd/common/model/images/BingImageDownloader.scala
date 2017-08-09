@@ -161,7 +161,7 @@ class BingImageDownloader(baseUrl: String) extends LazyLogging {
     Future {
       readThumbnailPath(sense)
     }.recoverWith { case e: FileNotFoundException =>
-      logger.debug(s"Image for sense ${sense.uniqueID} not found on disk.")
+      logger.info(s"Image for sense ${sense.uniqueID} not found on disk:\n" + e.getMessage)
       download(sense)
     }
 
