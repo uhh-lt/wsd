@@ -73,10 +73,10 @@ import_db_sample_sentences() {
 
     csv_file=data/sample_sentences_traditional_inventory.csv
 
-    docker cp "$csv_file" wsd_import_db:/data.csv
+    docker cp "$csv_file" wsd_db_1:/data.csv
 
     sql_cmd="""
-    DROP TABLE sample_sentences
+    DROP TABLE IF EXISTS sample_sentences;
     CREATE TABLE sample_sentences (
         sentence_id INT,
         sense_id TEXT,
@@ -88,6 +88,7 @@ import_db_sample_sentences() {
     COPY sample_sentences(sentence_id, sense_id, sense_position, sentence)
         FROM '/data.csv'
         DELIMITER E'\t'
+        QUOTE E'\b' -- https://stackoverflow.com/a/20402913
         CSV HEADER;
 
     UPDATE  sample_sentences SET inventory = 'traditional';
