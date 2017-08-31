@@ -7,7 +7,7 @@ import akka.actor.ActorSystem
 import akka.stream.{ActorMaterializer, Materializer}
 import com.google.inject.ImplementedBy
 import de.tudarmstadt.lt.wsd.common.model.Sense
-import de.tudarmstadt.lt.wsd.common.model.images.BingImageDownloader
+import de.tudarmstadt.lt.wsd.bing_images.BingImageDownloader
 import play.api.inject.ApplicationLifecycle
 import play.api.libs.ws.WSClient
 

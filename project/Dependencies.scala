@@ -77,7 +77,10 @@ object Dependencies {
     commons_io,
     skinny_orm,
     skinny_orm_test,
-    csv_reader,
+    csv_reader
+  )
+
+  val bingImagesDeps = baseDeps ++ Seq(
     play_ws,
     play_server % Test,
     play_netty_server % Test

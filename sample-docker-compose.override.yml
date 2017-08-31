@@ -8,10 +8,8 @@ services:
       - "9000:9000"
     environment:
       - APPLICATION_SECRET=change_me # Some random string
-      - WSP_FLICKR_API_KEY=change_me # Obtained from: https://www.flickr.com/services/apps/
       - WSP_BING_API_KEY=change_me # Obtained from: https://www.microsoft.com/cognitive-services/en-US/subscriptions
       - WSP_API_PUBLIC_URL=http://yourdomain.com:9000
-      - WSP_API_BING_IMAGE_FOLDER=/tmp/bing_images
   web:
     build:
       args:
