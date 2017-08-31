@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 docker_sbt_cmd() {
   docker run -it --rm -v $(pwd):/root hseeberger/scala-sbt sbt "$@" -ivy .ivy2
 }
@@ -23,3 +22,4 @@ ensure_only_db_is_running() {
 
 export -f docker_sbt_cmd
 export -f shutdown_web_app
+export -f ensure_only_db_is_running

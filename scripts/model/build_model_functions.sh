@@ -16,8 +16,6 @@ ddt_c=${3:-$toy_ddt_c}
 
 model_location=${4:-"data/models"}
 
-
-
 spark_submit_cmd() {
   scripts/spark_submit_jar.sh $@
 }
@@ -141,7 +139,6 @@ build_model() {
   spark_submit_cmd "create -n traditional_coocwords -c $ddt_t -f $lmi -p $model_location"
   spark_submit_cmd "create -n traditional_coocdeps -c $ddt_t -f $lmi -p $model_location"
   spark_submit_cmd "create -n traditional_self -c $ddt_t -f $lmi -p $model_location"
-  
 }
 
 export_db() {
@@ -161,7 +158,6 @@ run() {
 
 export -f run
 export -f build_model
-export -f ensure_only_db_is_running
 export -f export_db
 export -f import_db_babelnet_ids
 export -f import_db_entities
