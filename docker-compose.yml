@@ -22,6 +22,8 @@ services:
     depends_on:
       - db
     restart: always
+    ports:
+      - "9000:9000"
   web:
     build:
       context: web
@@ -32,3 +34,6 @@ services:
         image_api_name: "bing" # or "flickr"
     depends_on:
       - api
+    ports:
+      - "80:8080"
+

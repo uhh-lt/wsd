@@ -1,0 +1,36 @@
+#!/bin/bash
+set -o errexit
+
+scripts_dir=$(dirname $0)/scripts
+command="$1"
+#args="${@:3}"
+
+if [ "$command" == "model:download" ] ;then
+  $scripts_dir/model/download_latest_model.sh
+elif [ "$command" == "model:build_toy" ];then
+  #$scripts_dir/model/download_usages.sh
+  $scripts_dir/model/build_toy_model.sh
+elif [ "$command" == "model:build_full" ];then
+  $scripts_dir/model/download_training_data.sh
+  $scripts_dir/model/download_usages.sh
+  $scripts_dir/model/build_model.sh
+elif [ "$command" == "web-app:start" ];then
+  $scripts_dir/start_web_app.sh
+elif [ "$command" == "web-app:stop" ];then
+  docker-compose down
+else
+  echo ""
+  echo "Usage: wsd COMMAND [OPTIONS]..."
+  echo ""
+  echo "A system for creating and serving word sense disambiguation models"
+  echo ""
+  echo "Model Creation Commands"
+  echo "  model:download     : download latest model form the web [recommended]"
+  echo "  model:build_toy    : build a small toy model within minutes"
+  echo "  model:build_full   : downloads the training data and then builds the full model (with 8 cores ~10h)"
+  echo ""
+  echo "Serving Commands"
+  echo "  web-app:start      : builds and then starts the web app (Important: this requires a model, see Model Creation Commands)"
+  echo "  web-app:stop       : stops the web app"
+  echo ""
+fi
