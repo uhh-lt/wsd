@@ -17,7 +17,7 @@ shutdown_web_app >> $logfile
 
 today="$( date +"%Y%m%d" )"
 pgdata_backup="${today}_pgdata.tar"
-imgdata_backup="${today}_imgdata.tar.gz"
+imgdata_backup="${today}_imgdata.tgz"
 
 if test -e "$backup_folder/$pgdata_backup"; then
   echo "Backup '$backup_folder/$pgdata_backup' already exists."
