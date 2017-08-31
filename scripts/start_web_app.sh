@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 logfile=logs/web_app_build.log
+mkdir -p logs
 echo "Build and then start web application"
 echo
 echo "Logs can be found in $logfile"
