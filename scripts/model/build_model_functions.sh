@@ -3,6 +3,9 @@
 set -o nounset # Error on referencing undefined variables, shorthand: set -n
 set -o errexit # Abort on error, shorthand: set -e
 
+model_scripts_dir=$(dirname $0)
+source $model_scripts_dir/common_functions.sh
+
 toy_lmi="data/training/45g-lmi-test-both.csv"
 toy_ddt_t="data/training/ddt-mwe-45g-8m-thr-agressive2-cw-e0-N200-n200-minsize5-isas-cmb-313k-hyper-filter-closure-test-python.csv"
 toy_ddt_c="data/training/P80_T0_Ecount_N0_Htfidf_clusters-test-cosets-2.csv"
@@ -13,12 +16,10 @@ ddt_c=${3:-$toy_ddt_c}
 
 model_location=${4:-"data/models"}
 
+
+
 spark_submit_cmd() {
   scripts/spark_submit_jar.sh $@
-}
-
-docker_sbt_cmd() {
-  docker run -it --rm -v $(pwd):/root hseeberger/scala-sbt sbt "$@" -ivy .ivy2
 }
 
 import_db_entities() {
@@ -141,19 +142,6 @@ build_model() {
   spark_submit_cmd "create -n traditional_coocdeps -c $ddt_t -f $lmi -p $model_location"
   spark_submit_cmd "create -n traditional_self -c $ddt_t -f $lmi -p $model_location"
   
-}
-
-shutdown_web_app() {
-  docker_sbt_cmd api/docker:stage # We need the Dockerfile for the API to use docker-compose
-  # docker-compose exec db psql -U postgres -c "\l" # List databases
-  docker-compose down
-}
-
-ensure_only_db_is_running() {
-  shutdown_web_app
-  docker-compose up -d db
-  until docker-compose exec db psql -U postgres -c "select 1" -d postgres; do echo "Waiting for DB to startup"; sleep 1; done > /dev/null
-  echo "DB is ready"
 }
 
 export_db() {

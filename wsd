@@ -7,13 +7,15 @@ command="$1"
 
 if [ "$command" == "model:download" ] ;then
   $scripts_dir/model/download_latest_model.sh
-elif [ "$command" == "model:build_toy" ];then
+elif [ "$command" == "model:build-toy" ];then
   #$scripts_dir/model/download_usages.sh
   $scripts_dir/model/build_toy_model.sh
-elif [ "$command" == "model:build_full" ];then
+elif [ "$command" == "model:build-full" ];then
   $scripts_dir/model/download_training_data.sh
   $scripts_dir/model/download_usages.sh
   $scripts_dir/model/build_model.sh
+elif [ "$command" == "model:backup" ];then
+  $scripts_dir/model/backup_model.sh
 elif [ "$command" == "web-app:start" ];then
   $scripts_dir/start_web_app.sh
 elif [ "$command" == "web-app:stop" ];then
@@ -26,8 +28,9 @@ else
   echo ""
   echo "Model Creation Commands"
   echo "  model:download     : download latest model form the web [recommended]"
-  echo "  model:build_toy    : build a small toy model within minutes"
-  echo "  model:build_full   : downloads the training data and then builds the full model (with 8 cores ~10h)"
+  echo "  model:build-toy    : build a small toy model within minutes"
+  echo "  model:build-full   : downloads the training data and then builds the full model (with 8 cores ~10h)"
+  echo "  model:backup       : creates a backup of the current model"
   echo ""
   echo "Serving Commands"
   echo "  web-app:start      : builds and then starts the web app (Important: this requires a model, see Model Creation Commands)"
