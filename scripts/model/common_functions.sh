@@ -5,7 +5,7 @@ docker_sbt_cmd() {
 }
 
 shutdown_web_app() {
-  project_root="$(dirname $0)/../.."
+  local project_root="$(dirname $0)/../.."
   if ! test -e "$project_root/api/target/docker/stage/Dockerfile"; then
    # We need the Dockerfile for the API to use docker-compose and can create it with sbt
    docker_sbt_cmd api/docker:stage
@@ -23,19 +23,27 @@ ensure_only_db_is_running() {
 # Because MacOs misses realpath (and also readlink)
 # https://stackoverflow.com/a/18443300
 combat_realpath() {
-  OURPWD=$PWD
+  local OURPWD=$PWD
   cd "$(dirname "$1")"
-  LINK=$(readlink "$(basename "$1")")
+  local LINK=$(readlink "$(basename "$1")")
   while [ "$LINK" ]; do
     cd "$(dirname "$LINK")"
-    LINK=$(readlink "$(basename "$1")")
+    local LINK=$(readlink "$(basename "$1")")
   done
-  REALPATH="$PWD/$(basename "$1")"
+  local REALPATH="$PWD/$(basename "$1")"
   cd "$OURPWD"
   echo "$REALPATH"
+}
+
+has_project_model_bundle() {
+  local model_scripts_dir=$(dirname $0)
+  local project_root="$model_scripts_dir/../.."
+  test -d "$project_root/pgdata" || test -d "$project_root/imgdata"
+  return $?
 }
 
 export -f docker_sbt_cmd
 export -f shutdown_web_app
 export -f ensure_only_db_is_running
 export -f combat_realpath
+export -f has_project_model_bundle
