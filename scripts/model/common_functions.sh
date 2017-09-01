@@ -20,6 +20,22 @@ ensure_only_db_is_running() {
   echo "DB is ready"
 }
 
+# Because MacOs misses realpath (and also readlink)
+# https://stackoverflow.com/a/18443300
+combat_realpath() {
+  OURPWD=$PWD
+  cd "$(dirname "$1")"
+  LINK=$(readlink "$(basename "$1")")
+  while [ "$LINK" ]; do
+    cd "$(dirname "$LINK")"
+    LINK=$(readlink "$(basename "$1")")
+  done
+  REALPATH="$PWD/$(basename "$1")"
+  cd "$OURPWD"
+  echo "$REALPATH"
+}
+
 export -f docker_sbt_cmd
 export -f shutdown_web_app
 export -f ensure_only_db_is_running
+export -f combat_realpath
