@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 
 model_scripts_dir=$(dirname $0)
-project_root=$(readlink -f "$model_scripts_dir/../..")
+
+combat_readlink() {
+ if [ "$(uname -s)" = 'Linux' ]; then
+    readlink -f "$1"
+ else
+    readlink "$1"
+  fi
+}
+
+project_root=$(combat_readlink "$model_scripts_dir/../..")
 backup_folder="$project_root/data/backup"
 
 download_db() {

@@ -3,7 +3,15 @@
 model_scripts_dir=$(dirname $0)
 source $model_scripts_dir/common_functions.sh
 
-project_root=$(readlink -f "$model_scripts_dir/../..")
+combat_readlink() {
+ if [ "$(uname -s)" = 'Linux' ]; then
+    readlink -f "$1"
+ else
+    readlink "$1"
+  fi
+}
+
+project_root=$(combat_readlink "$model_scripts_dir/../..")
 logfile="$project_root/logs/backup.log"
 backup_folder="$project_root/data/backup"
 pgdata_folder="$project_root/pgdata"
