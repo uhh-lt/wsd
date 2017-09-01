@@ -1,8 +1,0 @@
-{
-  "require": {
-    "vlucas/phpdotenv": "^2.3"
-  },
-  "config": {
-    "cache-dir": "var/composer-cache"
-  }
-}

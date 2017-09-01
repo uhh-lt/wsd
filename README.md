@@ -21,7 +21,6 @@ This project consists of multiple subprojects:
 - A REST **api** project
 - A ReactJS **web** frontend project
 - A **spark** project for calculating the model and exporting it to a DB
-- A **babelnet-downloader** to retrieve test data
 
 This README covers how to deploy the Web frontend together with the API.
 For topics on the other subprojects you will find READMEs within their folders.
@@ -94,7 +93,7 @@ This model only provides senses for the word "Python" but is fully functional an
 Once you are ready to build the full model, here is how to do it. It will take nearly 11 hours on an eight core machine with 30GB of memory and needs 120GB of free disk space.
 
 - First follow the instruction in `data/training/README.md` to download the training data into the same folder.
-- Than take a lookt at the script `scripts/spark_submit_jar.sh` and adjust the amount of memory used to whatever you want to provide to Spark.
+- Then take a lookt at the script `scripts/spark_submit_jar.sh` and adjust the amount of memory used to whatever you want to provide to Spark.
 - Optionally you can copy `sample-app.conf` to `app.conf` and include the commented out params in `scripts/spark_submit_jar.sh` and further configure the software by changing `app.conf`. Take a look at `sample-app.conf` to get an idea of what can be configured.
 - Finally use the following script to compute the model: `scripts/build_model.sh`
 
