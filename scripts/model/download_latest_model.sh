@@ -6,7 +6,7 @@ backup_folder="$project_root/data/backup"
 
 download_db() {
   echo "Downloading DB backup"
-  latest_pgdata=20170719_wsd_db.tar
+  latest_pgdata=20170831_wsd_db.tar
   wget -nc http://ltdata1.informatik.uni-hamburg.de/joint/wsd/$latest_pgdata -P $backup_folder
 
   echo "Extracting DB backup"
@@ -28,7 +28,7 @@ download_images() {
 
   echo "Downloading images backup"
 
-  latest_imgdata=20170721_100k_imgdata.tgz
+  latest_imgdata=20170831_all_senses_imgdata.tgz
   wget -nc http://ltdata1.informatik.uni-hamburg.de/joint/wsd/$latest_imgdata -P $backup_folder
 
   echo "Extracting images backup"
@@ -42,7 +42,7 @@ download_images() {
     # Adjust UID, 1 is the daemon user in the wsd_api docker container
     docker run -v "$project_root/imgdata:/imgdata" alpine chown -R 1:1 /imgdata/bing
   fi
-  
+
   return "$status"
 }
 
