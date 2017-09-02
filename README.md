@@ -46,7 +46,7 @@ cd wsd
 We provide a ready for use database. To download and prepare the project with this database, you can use the following instructions:
 
 ```bash
-wget http://ltdata1.informatik.uni-hamburg.de/joint/wsd/20170719_wsd_db.tar
+wget http://ltdata1.informatik.uni-hamburg.de/joint/wsd/20170831_wsd_db.tar
 tar -xf 20170719_wsd_db.tar
 # Adjust UID, 999 is the postgres user in the wsd_db docker container
 docker run -v "$(pwd)/pgdata:/pgdata" alpine chown -R 999:999 /pgdata/data
@@ -59,7 +59,7 @@ For instructions on how to rebuild the DB with the model, please see below: [Bui
 Additionally we provide an archive with images for most senses.
 
 ```bash
-wget http://ltdata1.informatik.uni-hamburg.de/joint/wsd/20170721_wsd_images.tgz
+wget http://ltdata1.informatik.uni-hamburg.de/joint/wsd/20170831_all_senses_imgdata.tgz
 tar -xzf 20170721_wsd_images.tgz
 # Adjust UID, 1 is the daemon user in the wsd_api docker container
 docker run -v "$(pwd)/imgdata:/imgdata" alpine chown -R 1:1 /imgdata/bing
