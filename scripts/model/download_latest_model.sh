@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 
 
-model_scripts_dir=$(dirname $0)
+scripts_dir="$(dirname $0)/.."
+source "$scripts_dir/common_functions.sh"
+project_root=$(combat_realpath "$scripts_dir/..")
 
-source "$model_scripts_dir/common_functions.sh"
-
-project_root=$(combat_realpath "$model_scripts_dir/../..")
 backup_folder="$project_root/data/backup"
 
 download_db() {

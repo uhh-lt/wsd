@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-model_scripts_dir=$(dirname $0)
-source "$model_scripts_dir/common_functions.sh"
+scripts_dir="$(dirname $0)/.."
+source "$scripts_dir/common_functions.sh"
+project_root=$(combat_realpath "$scripts_dir/..")
 
-project_root=$(combat_realpath "$model_scripts_dir/../..")
 logfile="$project_root/logs/backup.log"
 backup_folder="$project_root/data/backup"
 pgdata_folder="$project_root/pgdata"

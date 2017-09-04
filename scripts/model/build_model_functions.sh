@@ -3,8 +3,8 @@
 set -o nounset # Error on referencing undefined variables, shorthand: set -n
 set -o errexit # Abort on error, shorthand: set -e
 
-model_scripts_dir=$(dirname $0)
-source $model_scripts_dir/common_functions.sh
+scripts_dir="$(dirname $0)/.."
+source "$scripts_dir/common_functions.sh"
 
 toy_lmi="data/training/45g-lmi-test-both.csv"
 toy_ddt_t="data/training/ddt-mwe-45g-8m-thr-agressive2-cw-e0-N200-n200-minsize5-isas-cmb-313k-hyper-filter-closure-test-python.csv"

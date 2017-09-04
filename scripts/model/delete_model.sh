@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
-model_scripts_dir="$(dirname $0)"
+scripts_dir="$(dirname $0)/.."
+source "$scripts_dir/common_functions.sh"
+project_root=$(combat_realpath "$scripts_dir/..")
 
-source "$model_scripts_dir/common_functions.sh"
-
-project_root=$(combat_realpath "$model_scripts_dir/../..")
 logfile="$project_root/logs/delete-model.log"
 
 echo "Deleting loaded model bundle"
@@ -23,7 +22,7 @@ then
 else
   echo "----- STARTING BACKUP -----"
   echo
-  $model_scripts_dir/backup_model.sh
+  $scripts_dir/model/backup_model.sh
   echo
   echo "----- BACKUP FINISHED -----"
   echo
