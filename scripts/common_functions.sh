@@ -43,8 +43,19 @@ has_project_model_bundle() {
   return $?
 }
 
+abort_if_model_already_loaded() {
+  if has_project_model_bundle; then
+    echo
+    echo "Error: Project already has a model bundle loaded."
+    echo "You must remove this model bundle before you can continue."
+    echo "Run: wsd model:detele"
+    exit 1
+  fi
+}
+
 export -f sbt_cmd
 export -f shutdown_web_app
 export -f ensure_only_db_is_running
 export -f combat_realpath
 export -f has_project_model_bundle
+export -f abort_if_model_already_loaded

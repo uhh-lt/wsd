@@ -49,7 +49,7 @@ download_images() {
   return "$status"
 }
 
-
+abort_if_model_already_loaded
 
 if download_db && download_images; then
   echo
