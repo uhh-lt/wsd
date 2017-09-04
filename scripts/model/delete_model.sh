@@ -7,9 +7,8 @@ project_root=$(combat_realpath "$scripts_dir/..")
 logfile="$project_root/logs/delete-model.log"
 
 echo "Deleting loaded model bundle"
-echo "Logs are written to '$logfile'"
 echo
-echo "Shutting down web app"
+echo "Shutting down web app, writing logs to: '$logfile'"
 shutdown_web_app >> $logfile
 echo
 read -p "Do you want to create a backup? (Y|n) " -r

@@ -10,9 +10,8 @@ pgdata_folder="$project_root/pgdata"
 imgdata_folder="$project_root/imgdata"
 
 echo "Backing up model"
-echo "Logs are written to '$logfile'"
 
-echo "Shutting down web app"
+echo "Shutting down web app, writing logs to: '$logfile'"
 shutdown_web_app >> $logfile
 
 today="$( date +"%Y%m%d" )"

@@ -4,7 +4,6 @@ logfile=logs/web_app_build.log
 mkdir -p logs
 echo "Build and then start web application"
 echo
-echo "Logs can be found in $logfile"
 
 if ! test -f "docker-compose.override.yml"; then
 echo
@@ -19,10 +18,10 @@ fi
 echo
 # First prepare the API subproject to build a Docker image from it:
 # This will compile the SBT source code and generate a `Dockerfile` to `api/target/docker/stage`, which is used in the docker-compose.yml.
-echo "Compile sbt project"
+echo "Compile sbt project, writing logs to: '$logfile'"
 docker run -it --rm -v $(pwd):/root hseeberger/scala-sbt sbt api/docker:stage -ivy .ivy2 >> $logfile
 echo
-echo "Build docker images"
+echo "Build docker images, writing logs to: '$logfile'"
 docker-compose build >> $logfile
 echo
 echo "Start docker containers"
