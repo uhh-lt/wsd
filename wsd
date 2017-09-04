@@ -22,6 +22,7 @@ elif [ "$command" == "model:backup" ];then
 elif [ "$command" == "model:delete" ];then
   $scripts_dir/model/delete_model.sh
 elif [ "$command" == "web-app:start" ];then
+  abort_if_no_model_loaded
   $scripts_dir/start_web_app.sh
 elif [ "$command" == "web-app:stop" ];then
   docker-compose down
@@ -34,19 +35,19 @@ else
   echo ""
   echo "A system for creating and serving word sense disambiguation models"
   echo ""
-  echo "Model Commands"
-  echo "  model:download     : download the latest model bundle form the web"
+  echo "Model Bundle Commands"
+  echo "  model:download     : download and loads the latest model bundle"
   echo "                       (recommended for normal usage)"
-  echo "  model:build-toy    : builds a small toy model bundle within minutes"
-  echo "  model:build-full   : downloads the training data and then builds the full model bundle"
+  echo "  model:build-toy    : builds and loads a small toy model bundle within minutes"
+  echo "  model:build-full   : downloads the training data, then builds and loads the full model bundle"
   echo "                       (with 8 cores ~10h)"
-  echo "  model:status       : provide information of the current model bundle"
-  echo "  model:backup       : creates a backup of the current model bundle"
-  echo "  model:delete       : deletes the current model bundle"
+  echo "  model:status       : provide information of the current model bundle loaded"
+  echo "  model:backup       : creates a backup of the current model bundle loaded"
+  echo "  model:delete       : deletes the currently loaded model bundle"
   echo ""
   echo "Serving Commands"
-  echo "  web-app:start      : builds and then starts the web app"
-  echo "                       (important: this requires a model, see Model Commands)"
+  echo "  web-app:start      : builds the web app and then starts it"
+  echo "                       (important: this requires a loaded model bundle, see Model Bundle Commands)"
   echo "  web-app:stop       : stops the web app"
   echo ""
 fi

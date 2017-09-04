@@ -6,7 +6,7 @@ project_root=$(combat_realpath "$scripts_dir/..")
 
 if has_project_model_bundle; then
   echo
-  echo "Project has model bundle loaded."
+  echo "Model bundle loaded for project."
   echo
 else
   echo
