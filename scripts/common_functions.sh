@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 
-docker_sbt_cmd() {
-  docker run -it --rm -v $(pwd):/root hseeberger/scala-sbt sbt "$@" -ivy .ivy2
+sbt_cmd() {
+  project_root="$(dirname $0)/../.."
+  $project_root/sbt/sbt "$@"
 }
 
 shutdown_web_app() {
   local project_root="$(dirname $0)/../.."
   if ! test -e "$project_root/api/target/docker/stage/Dockerfile"; then
    # We need the Dockerfile for the API to use docker-compose and can create it with sbt
-   docker_sbt_cmd api/docker:stage
+   sbt_cmd api/docker:stage
   fi
   docker-compose stop
 }
@@ -42,7 +43,7 @@ has_project_model_bundle() {
   return $?
 }
 
-export -f docker_sbt_cmd
+export -f sbt_cmd
 export -f shutdown_web_app
 export -f ensure_only_db_is_running
 export -f combat_realpath

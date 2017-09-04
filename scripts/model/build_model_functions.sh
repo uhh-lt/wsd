@@ -130,7 +130,7 @@ build_model() {
   mkdir -p /tmp/spark-events
   rm -rdf "$model_location"
 
-  docker_sbt_cmd spark/assembly
+  sbt_cmd spark/assembly
 
   spark_submit_cmd "create -n cosets1k_coocwords -c $ddt_c -f $lmi -p $model_location"
   spark_submit_cmd "create -n cosets1k_coocdeps -c $ddt_c -f $lmi -p $model_location"

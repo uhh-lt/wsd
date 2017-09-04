@@ -29,8 +29,10 @@ For topics on the other subprojects you will find READMEs within their folders.
 
 ## Prerequisites
 
+- Java 1.8
 - Docker Engine (1.13.0+), see [Docker installation guide](https://docs.docker.com/engine/installation/)
 - Docker Compose (1.10.0+), see [Compose installation guide](https://docs.docker.com/compose/install/)
+
 
 ## Instructions
 
