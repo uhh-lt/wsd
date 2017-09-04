@@ -32,7 +32,7 @@ wait_for_url() {
   msg="$1"
   url="$2"
   echo -n "$msg"
-  until curl -sf "$url" > /dev/null; do echo $?; sleep 1; done
+  until curl -sf "$url" > /dev/null; do :; sleep 1; done
   echo " [done]"
 }
 echo
