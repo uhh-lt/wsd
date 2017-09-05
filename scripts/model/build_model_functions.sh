@@ -148,12 +148,25 @@ export_db() {
 }
 
 run() {
+  echo "Build models with Spark (this will take a while)"
   build_model
+  echo
+  echo "Prepare DB"
   ensure_only_db_is_running
+  echo
+  echo "Export models to DB"
   export_db
+  echo
+  echo "Import Babelnet IDs of senses"
   import_db_babelnet_ids
+  echo
+  echo "Import named entities into DB"
   import_db_entities
+  echo
+  echo "Import usage examples into DB"
   import_db_usage_examples
+  echo
+  echo "Done."
 }
 
 export -f run

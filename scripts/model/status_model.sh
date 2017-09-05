@@ -6,13 +6,13 @@ project_root=$(combat_realpath "$scripts_dir/..")
 
 if has_project_model_bundle; then
   echo
-  echo "Model bundle loaded for project."
+  echo "[LOADED] Model bundle loaded for project."
   echo
 else
   echo
-  echo "No model bundle loaded."
+  echo "[MISSING] No model bundle loaded."
   echo
 fi
 
-echo "This is the contents of your backup folder (data/backup):"
+echo "This is the content of your backup folder ('data/backup'):"
 ls -lh $project_root/data/backup

@@ -1,5 +1,8 @@
 version: '3'
 services:
+  db:
+    ports:
+      - "5432:5432"
   api:
     ports:
       - "9000:9000"

@@ -45,8 +45,8 @@ has_project_model_bundle() {
 
 abort_if_model_already_loaded() {
   if has_project_model_bundle; then
+    echo "Error: Has already a model bundle loaded."
     echo
-    echo "Error: Project already has a model bundle loaded."
     echo "You must remove this model bundle before you can continue."
     echo "Run: wsd model:delete"
     exit 1
@@ -56,10 +56,10 @@ abort_if_model_already_loaded() {
 abort_if_no_model_loaded() {
   if has_project_model_bundle; then :
   else
+    echo "Error: No model bundle loaded in project."
     echo
-    echo "Error: Project has no model bundle loaded."
     echo "To continue you must load a model bundle, this can be done by either"
-    echo "downloading or building the toy or full model, see the 'wsd model:*' commands"
+    echo "downloading or building the toy or full model, see the 'wsd model:*' commands."
     exit 1
   fi
 }
