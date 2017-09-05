@@ -9,10 +9,12 @@ source "$scripts_dir/common_functions.sh"
 toy_lmi="data/training/45g-lmi-test-both.csv"
 toy_ddt_t="data/training/ddt-mwe-45g-8m-thr-agressive2-cw-e0-N200-n200-minsize5-isas-cmb-313k-hyper-filter-closure-test-python.csv"
 toy_ddt_c="data/training/P80_T0_Ecount_N0_Htfidf_clusters-test-cosets-2.csv"
+toy_usages="data/sample_sentences_traditional_inventory.csv"
 
 lmi=${1:-$toy_lmi}
 ddt_t=${2:-$toy_ddt_t}
 ddt_c=${3:-$toy_ddt_c}
+usages=${4:-$toy_usages}
 
 model_location=${4:-"data/models"}
 
@@ -77,11 +79,10 @@ import_db_usage_examples() {
     # Adding usage examples for senses:
     # @See: de.tudarmstadt.lt.wsd.common.model.SampleSentence
 
-    usages="data/usages-wiki-ddt-mwe-313k.csv"
-    cleaned="data/usages-wiki-ddt-mwe-313k-cleaned.csv"
+    cleaned="data/cleaned-$usages"
 
     # echo "Count tabs in each line and group by occurrence"
-    # awk '{print gsub(/\t/, "")}' usages | sort | uniq -c
+    # awk '{print gsub(/\t/, "")}' $usages | sort | uniq -c
 
     # Clean file, steps are explained here:
     # 1) number of tabs per line: https://stackoverflow.com/a/15518345
@@ -148,7 +149,6 @@ export_db() {
 }
 
 run() {
-  local start
 
   start_timer() {
     start=$SECONDS
