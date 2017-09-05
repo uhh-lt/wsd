@@ -58,7 +58,8 @@ ensure_only_db_is_running() {
   shutdown_web_app
   ensure_docker_compose_override_exists
   docker-compose up -d db
-  wait_for_db
+  echo "Wait 5 seconds, to make sure DB is completely running (hack for now)"
+  sleep 5
 }
 
 # Because MacOs misses realpath (and also readlink)
