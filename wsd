@@ -12,9 +12,9 @@ elif [ "$command" == "model:build-toy" ];then
   $scripts_dir/model/build_toy_model.sh
 elif [ "$command" == "model:build-full" ];then
   abort_if_model_already_loaded
-  $scripts_dir/model/download_training_data.sh
-  $scripts_dir/model/download_usages.sh
-  $scripts_dir/model/build_model.sh
+  $scripts_dir/model/download_full_training_data.sh
+  $scripts_dir/model/download_full_usages.sh
+  $scripts_dir/model/build_full_model.sh
 elif [ "$command" == "model:status" ];then
   $scripts_dir/model/status_model.sh
 elif [ "$command" == "model:backup" ];then
