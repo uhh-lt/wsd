@@ -79,7 +79,7 @@ import_db_usage_examples() {
     # Adding usage examples for senses:
     # @See: de.tudarmstadt.lt.wsd.common.model.SampleSentence
 
-    cleaned="data/cleaned-$usages"
+    cleaned="data/cleaned-$(basename $usages)"
 
     # echo "Count tabs in each line and group by occurrence"
     # awk '{print gsub(/\t/, "")}' $usages | sort | uniq -c
