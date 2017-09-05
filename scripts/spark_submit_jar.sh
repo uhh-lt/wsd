@@ -25,8 +25,7 @@ fi
 
 ${cmd} \
  --master "local[*]" \
- --conf 'spark.executor.extraJavaOptions=-Dlog4j.debug=true' \
- --conf 'spark.driver.extraJavaOptions=-Dlog4j.debug=true' \
+ --files 'spark/src/main/resources/log4j.properties' \
  --conf 'spark.executor.extraJavaOptions=-Dlog4j.configuration=log4j.properties' \
  --conf 'spark.driver.extraJavaOptions=-Dlog4j.configuration=log4j.properties' \
  --conf 'spark.driver.memory=4g' \
