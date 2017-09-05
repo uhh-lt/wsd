@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-scripts_dir="$(dirname $0)/.."
+scripts_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 source "$scripts_dir/common_functions.sh"
 project_root=$(combat_realpath "$scripts_dir/..")
 

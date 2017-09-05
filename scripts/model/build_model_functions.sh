@@ -3,7 +3,7 @@
 set -o nounset # Error on referencing undefined variables, shorthand: set -n
 set -o errexit # Abort on error, shorthand: set -e
 
-scripts_dir="$(dirname $0)/.."
+scripts_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 source "$scripts_dir/common_functions.sh"
 
 toy_lmi="data/training/45g-lmi-test-both.csv"
@@ -148,14 +148,42 @@ export_db() {
 }
 
 run() {
-  echo "Build models with Spark (this will take a while)"
+  local start
+
+  start_timer() {
+    start=$SECONDS
+  }
+
+  echo_timer() {
+    echo "it took $($start - $SECONDS) secs"
+  }
+
+  echo "Creating a model bundle from training data."
+  echo
+  echo "This command will do the following steps:"
+  echo "1. Creates all models with Spark (Parquet format)"
+  echo "2. Exports the models to the DB (Postgres format)"
+  echo "3. Applies further migrations to the DB"
+  echo
+  echo "----- (1) STARTING MODEL CREATION WITH SPARK -----"; start_timer
+
+  echo
   build_model
+  echo
+  echo
+  echo "----- (1) FINISHED MODEL CREATION WITH SPARK ($(echo_timer)) -----"
+  echo
+  echo "----- (2) STARTING EXPORT MODELS TO DB -----"; start_timer
   echo
   echo "Prepare DB"
   ensure_only_db_is_running
   echo
   echo "Export models to DB"
   export_db
+  echo
+  echo "----- (2) FINISHED EXPORT MODELS TO DB ($(echo_timer)) -----"
+  echo
+  echo "----- (3) STARTING APPLY MIGRATIONS TO DB -----"; start_timer
   echo
   echo "Import Babelnet IDs of senses"
   import_db_babelnet_ids
@@ -165,6 +193,8 @@ run() {
   echo
   echo "Import usage examples into DB"
   import_db_usage_examples
+  echo
+  echo "----- (3) FINISHED APPLY MIGRATIONS TO DB ($(echo_timer)) -----"
   echo
   echo "Done."
 }

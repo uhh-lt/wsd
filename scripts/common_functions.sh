@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
 
 sbt_cmd() {
-  project_root="$(dirname $0)/../.."
+  local project_root="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
   $project_root/sbt/sbt "$@"
 }
 
-shutdown_web_app() {
+docker_compose_cmd() {
   local project_root="$(dirname $0)/../.."
+  pushd
+  cd $project_root
+  docker-compose "$@"
+  popd
+}
+
+shutdown_web_app() {
+  local project_root="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
   if ! test -e "$project_root/api/target/docker/stage/Dockerfile"; then
    # We need the Dockerfile for the API to use docker-compose and can create it with sbt
    sbt_cmd api/docker:stage
@@ -14,11 +22,43 @@ shutdown_web_app() {
   docker-compose stop
 }
 
+
+ensure_docker_compose_override_exists() {
+  local scripts_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  local project_root="$scripts_dir/.."
+  if ! test -f "$project_root/docker-compose.override.yml"; then
+    echo
+    cp sample-docker-compose.override.yml docker-compose.override.yml
+
+    echo "Created file: docker-compose.override.yml"
+    echo "Change this to configure your installation."
+    echo "Web frontend is now configured to run on: http//:localhost:8080"
+  fi
+}
+
+wait_for_db() {
+  echo -n "Waiting for DB server to start."
+  until docker-compose exec db psql -U postgres -c "select 1" -d postgres > /dev/null;
+    do sleep 1;
+  done
+  echo " [done]"
+}
+
+wait_for_url() {
+  msg="$1"
+  url="$2"
+  echo -n "$msg"
+  until curl -sf "$url" > /dev/null; do :; sleep 1; done
+  echo " [done]"
+}
+
+
+
 ensure_only_db_is_running() {
   shutdown_web_app
+  ensure_docker_compose_override_exists
   docker-compose up -d db
-  until docker-compose exec db psql -U postgres -c "select 1" -d postgres; do echo "Waiting for DB to startup"; sleep 1; done > /dev/null
-  echo "DB is ready"
+  wait_for_db
 }
 
 # Because MacOs misses realpath (and also readlink)
@@ -37,11 +77,12 @@ combat_realpath() {
 }
 
 has_project_model_bundle() {
-  local model_scripts_dir=$(dirname $0)
-  local project_root="$model_scripts_dir/../.."
+  local scripts_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  local project_root="$scripts_dir/.."
   test -d "$project_root/pgdata" || test -d "$project_root/imgdata"
   return $?
 }
+
 
 abort_if_model_already_loaded() {
   if has_project_model_bundle; then
@@ -70,3 +111,6 @@ export -f ensure_only_db_is_running
 export -f combat_realpath
 export -f has_project_model_bundle
 export -f abort_if_model_already_loaded
+export -f ensure_docker_compose_override_exists
+export -f wait_for_db
+export -f wait_for_url
