@@ -5,7 +5,7 @@ target=data/training
 
 ddt_archive=ddt-mwe-45g-8m-thr-agressive2-cw-e0-N200-n200-minsize5-isas-cmb-313k-hyper-filter-closure.csv.gz
 wget -c $origin/ddt/$ddt_archive -P $target
-tar -xzvf $target/ddt_archive -C $target
+tar -xzvf $target/$ddt_archive -C $target
 
 wget -c $origin/word-feature-counts/45g-lmi.csv.gz -P $target
 tar -xzvf $target/45g-lmi.csv.gz -C $target
