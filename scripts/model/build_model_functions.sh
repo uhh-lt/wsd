@@ -166,7 +166,6 @@ run() {
   echo "3. Applies further migrations to the DB"
   echo
   echo "----- (1) STARTING MODEL CREATION WITH SPARK -----"; start_timer
-
   echo
   build_model
   echo
@@ -175,8 +174,8 @@ run() {
   echo
   echo "----- (2) STARTING EXPORT MODELS TO DB -----"; start_timer
   echo
-  echo "Prepare DB"
-  ensure_only_db_is_running
+  #echo "Prepare DB"
+  #ensure_only_db_is_running
   echo
   echo "Export models to DB"
   export_db
