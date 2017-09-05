@@ -14,11 +14,11 @@ echo
 
 # First prepare the API subproject to build a Docker image from it:
 # This will compile the SBT source code and generate a `Dockerfile` to `api/target/docker/stage`, which is used in the docker-compose.yml.
-echo "Compile sbt project, writing logs to: '$logfile'"
-docker run -it --rm -v $(pwd):/root hseeberger/scala-sbt sbt api/docker:stage -ivy .ivy2 >> $logfile
+echo "Compile sbt project"
+docker run -it --rm -v $(pwd):/root hseeberger/scala-sbt sbt api/docker:stage -ivy .ivy2
 echo
-echo "Build docker images, writing logs to: '$logfile'"
-docker-compose build >> $logfile
+echo "Build docker images"
+docker-compose build
 echo
 echo "Start docker containers."
 docker-compose up -d
