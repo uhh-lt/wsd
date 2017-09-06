@@ -4,7 +4,7 @@ scripts_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 source "$scripts_dir/common_functions.sh"
 project_root=$(combat_realpath "$scripts_dir/..")
 
-logfile="$project_root/logs/backup.log"
+logfile="$project_root/data/logs/backup.log"
 backup_folder="$project_root/data/backup"
 pgdata_folder="$project_root/pgdata"
 imgdata_folder="$project_root/imgdata"

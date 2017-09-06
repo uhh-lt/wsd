@@ -4,7 +4,7 @@ scripts_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "$scripts_dir/common_functions.sh"
 project_root=$(combat_realpath "$scripts_dir/..")
 
-logfile="$project_root/logs/web_app_build.log"
+logfile="$project_root/data/logs/web_app_build.log"
 
 mkdir -p logs
 echo "Build and then start web application."

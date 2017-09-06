@@ -4,7 +4,7 @@ scripts_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
 source "$scripts_dir/common_functions.sh"
 project_root=$(combat_realpath "$scripts_dir/..")
 
-logfile="$project_root/logs/delete-model.log"
+logfile="$project_root/data/logs/delete-model.log"
 
 echo "Deleting loaded model bundle"
 echo
