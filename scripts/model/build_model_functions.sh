@@ -16,7 +16,7 @@ ddt_t=${2:-$toy_ddt_t}
 ddt_c=${3:-$toy_ddt_c}
 usages=${4:-$toy_usages}
 
-model_location=${4:-"data/models"}
+model_location=${5:-"data/models"}
 
 spark_submit_cmd() {
   scripts/spark_submit_jar.sh $@
