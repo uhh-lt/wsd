@@ -38,7 +38,7 @@ ensure_docker_compose_override_exists() {
 
 wait_for_db() {
   echo -n "Waiting for DB server to start."
-  until docker-compose exec db psql -U postgres -c "select 1" -d postgres > /dev/null;
+  until docker-compose exec db pg_isready > /dev/null;
     do sleep 1;
   done
   echo " [done]"
@@ -58,8 +58,7 @@ ensure_only_db_is_running() {
   shutdown_web_app
   ensure_docker_compose_override_exists
   docker-compose up -d db
-  echo "Wait 5 seconds, to make sure DB is completely running (hack for now)"
-  sleep 5
+  wait_for_db
 }
 
 # Because MacOs misses realpath (and also readlink)
