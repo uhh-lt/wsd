@@ -41,6 +41,8 @@ wait_for_db() {
   until docker-compose exec db pg_isready > /dev/null;
     do sleep 1;
   done
+  sleep 2 # Hack just wait 2 secs
+  # somehow server is not ready even after pg_isready call
   echo " [done]"
 }
 
