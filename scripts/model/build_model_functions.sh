@@ -155,7 +155,7 @@ run() {
   }
 
   echo_timer() {
-    local elapsed=($start - $SECONDS)
+    local elapsed=($SECONDS - $start)
 
     echo "it took $(($elapsed / 60)) mins and $(($elapsed % 60)) secs"
   }
