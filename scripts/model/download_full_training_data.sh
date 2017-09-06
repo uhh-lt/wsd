@@ -5,7 +5,7 @@ target="data/training"
 
 ddt="ddt-mwe-45g-8m-thr-agressive2-cw-e0-N200-n200-minsize5-isas-cmb-313k-hyper-filter-closure.csv"
 ddt_archive="$ddt.gz"
-wget -c "origin/ddt/$ddt_archive" -P "$target"
+wget -c "$origin/ddt/$ddt_archive" -P "$target"
 gunzip -c "$target/$ddt_archive" > "$target/$ddt"
 
 lmi="45g-lmi.csv"
