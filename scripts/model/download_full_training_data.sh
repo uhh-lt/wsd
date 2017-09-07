@@ -11,7 +11,7 @@ gunzip -c "$target/$ddt_archive" > "$target/$ddt"
 lmi="45g-lmi.csv"
 lmi_archive="$lmi.gz"
 wget -c "$origin/word-feature-counts/$lmi.gz" -P "$target"
-gunzip -c "$target/$lmi_archive" > "$target"
+gunzip -c "$target/$lmi_archive" > "$target/$lmi"
 cat "$target/$lmi" | grep -v '元' > "$target/45g-lmi.csv-cleaned.csv"
 mv "$target/45g-lmi.csv-cleaned.csv" "$target/45g-lmi.csv"
 
