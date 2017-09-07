@@ -37,8 +37,8 @@ function convertLegacyToNew(json) {
                 model: {
                     name: "external_model_depslm",
                     classifier: "unknown",
-                    sense_inventory_name: "traditional",
-                    word_vector_model: "depsml",
+                    sense_inventory_name: "external_traditional",
+                    word_vector_model: "depslm",
                     sense_vector_model : "unknown",
                     is_super_sense_inventory: false
                 },
@@ -48,7 +48,7 @@ function convertLegacyToNew(json) {
                     hypernyms: p.senseCluster.hypernyms.map((s) => s.split(":")[0])
                 },
                 contextFeatures: (p['contextFeatures']) ? p['contextFeatures'] : [],
-                mutualFeatures: [],
+                mutualFeatures: (p['mutualFeatures']) ? p['mutualFeatures'] : [],
                 top20ClusterFeatures: (p['top20ClusterFeatures']) ? p['top20ClusterFeatures'] : []
             }})
 
