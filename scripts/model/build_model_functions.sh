@@ -157,7 +157,7 @@ run() {
   echo_timer() {
     local elapsed=($SECONDS - $start)
 
-    echo "it took $(($elapsed / 60)) mins and $(($elapsed % 60)) secs"
+    echo "elapsed time: $(($elapsed / (60*60)))h $(($elapsed / 60))m $(($elapsed % 60))s"
   }
 
   echo "Creating a model bundle from training data."
