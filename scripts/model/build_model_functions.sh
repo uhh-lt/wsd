@@ -134,12 +134,14 @@ build_model() {
   sbt_cmd spark/assembly
 
   spark_submit_cmd "create -n cosets1k_coocwords -c $ddt_c -f $lmi -p $model_location"
-  spark_submit_cmd "create -n cosets1k_coocdeps -c $ddt_c -f $lmi -p $model_location"
   spark_submit_cmd "create -n cosets1k_self -c $ddt_c -f $lmi -p $model_location"
   
   spark_submit_cmd "create -n traditional_coocwords -c $ddt_t -f $lmi -p $model_location"
-  spark_submit_cmd "create -n traditional_coocdeps -c $ddt_t -f $lmi -p $model_location"
   spark_submit_cmd "create -n traditional_self -c $ddt_t -f $lmi -p $model_location"
+
+  # Comment coocdeps models out, currently not included in the frontend: they are large and have poor perf
+  # spark_submit_cmd "create -n cosets1k_coocdeps -c $ddt_c -f $lmi -p $model_location"
+  # spark_submit_cmd "create -n traditional_coocdeps -c $ddt_t -f $lmi -p $model_location"
 }
 
 export_db() {
