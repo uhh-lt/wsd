@@ -4,7 +4,7 @@ A software to construct and visualize Word Sense Disambiguation models based on 
 
 * Panchenko A., Marten F., Ruppert E.,  Faralli S., Ustalov D., Ponzetto S.P., Biemann C. [Unsupervised, Knowledge-Free, and Interpretable Word Sense Disambiguation](https://arxiv.org/abs/1707.06878). In Proceedings of the the Conference on Empirical Methods on Natural Language Processing (EMNLP 2017). 2017. Copenhagen, Denmark. Association for Computational Linguistics
 
-```latex
+```bibtex
 @inproceedings{Panchenko:17:emnlp,
   author    = {Panchenko, Alexander and Marten, Fide and Ruppert, Eugen and Faralli, Stefano  and Ustalov, Dmitry and Ponzetto, Simone Paolo and Biemann, Chris},
   title     = {{Unsupervised, Knowledge-Free, and Interpretable Word Sense Disambiguation}},
@@ -15,102 +15,63 @@ A software to construct and visualize Word Sense Disambiguation models based on 
   language  = {english}
 }
 ```
-
-This project consists of multiple subprojects: 
-
-- A REST **api** project
-- A ReactJS **web** frontend project
-- A **spark** project for calculating the model and exporting it to a DB
-
-This README covers how to deploy the Web frontend together with the API.
-For topics on the other subprojects you will find READMEs within their folders.
-
-# Deployment of Web frontend and API
-
 ## Prerequisites
 
 - Java 1.8
 - Docker Engine (1.13.0+), see [Docker installation guide](https://docs.docker.com/engine/installation/)
 - Docker Compose (1.10.0+), see [Compose installation guide](https://docs.docker.com/compose/install/)
+- (Spark 2.0+, to [build your own model](#build-your-own-db))
 
 
-## Instructions
+# Serving the WSD model
 
-Start by checking out this repository.
+## Download precalculated DB and pictures
 
-```bash
-git clone https://github.com/uhh-lt/wsd
-cd wsd
-```
+We provide a ready for use database and a dump of pictures for all senses in the database.
+To download and prepare the project with those two artifacts, you can use the following command:
 
-### 1. Download precalculated DB and images
-
-We provide a ready for use database. To download and prepare the project with this database, you can use the following instructions:
+To download and untar it, you will need at least 320 GB of free disk space!
 
 ```bash
-wget http://ltdata1.informatik.uni-hamburg.de/joint/wsd/20170831_wsd_db.tar
-tar -xf 20170831_wsd_db.tar
-# Adjust UID, 999 is the postgres user in the wsd_db docker container
-docker run -v "$(pwd)/pgdata:/pgdata" alpine chown -R 999:999 /pgdata/data
+./wsd model:donwload
 ```
 
-NOTE: The Postgres data is currently around 120 GB!
+Note: For instructions on how to rebuild the DB with the model, please see below: [Build your own DB](#build-your-own-db)
 
-For instructions on how to rebuild the DB with the model, please see below: [Build your own DB](#build-your-own-db)
-
-Additionally we provide an archive with images for most senses.
-
-```bash
-wget http://ltdata1.informatik.uni-hamburg.de/joint/wsd/20170831_all_senses_imgdata.tgz
-tar -xzf 20170831_all_senses_imgdata.tgz
-# Adjust UID, 1 is the daemon user in the wsd_api docker container
-docker run -v "$(pwd)/imgdata:/imgdata" alpine chown -R 1:1 /imgdata/bing
-```
-
-NOTE: The image data is currently around 7 GB!
-
-### 2. Start the web application
-
-The web application useses Docker Compose to manage three services: DB, API and Website.
+## Start the web application
 
 To start the application:
 
-- First copy the configuration file: `cp sample-docker-compose.override.yml docker-compose.override.yml`.
-- By changing `docker-compose.override.yml` you can customize the deployment.
-See the [official documentation](https://docs.docker.com/compose/compose-file/) for detailed explanation of this file.
-- Then start the web application with: `./scripts/start_web_app.sh`
+```bash
+./wsd web-app:start
+```
+
+The web application runs with Docker Compose. To customize your installation adjust `docker-compose.override.yml`. See the [official documentation](https://docs.docker.com/compose/compose-file/) for general information on this file.
+
+To get further information on the running containers you can use all Docker Compose commands, such as `docker-compose ps` and `docker-compose logs`.
 
 # Build your own DB
 
-In case you want to build the model on your own, we recommend to first use a toy training dataset to build a toy model within a few minutes. Building the full model is the most time intensive part and also currently least documented. That is why we thought you might not want to start with it, but first finish the installation of the web application and then come back to build the full model in seciton 1.2.
+First set the `$SPARK_HOME` environment variable or provide `spark-submit` on your path. TODO link
+
+By modifying the script `scripts/spark_submit_jar.sh` you can adjust the amount of memory used by Spark (consider changing `--conf 'spark.driver.memory=4g'` and `--conf 'spark.executor.memory=1g'`).
+
+We recommend to first use a **toy training data set** to build a toy model within a few minutes.
 
 ## Build small toy model
+
 ```bash
-./scripts/build_toy_model.sh
+./wsd model:build-toy
 ```
+
 This model only provides senses for the word "Python" but is fully functional and should be used during the initial setup of the web application.
 
 ## Build full model
 
-Once you are ready to build the full model, here is how to do it. It will take nearly 11 hours on an eight core machine with 30GB of memory and needs 120GB of free disk space.
+Building the full model will take nearly 11 hours on an eight core machine with 30 GB of memory and needs around 300 GB of free disk space. It will also download 4 GB of training data.
 
-- First follow the instruction in `data/training/README.md` to download the training data into the same folder.
-- Then take a lookt at the script `scripts/spark_submit_jar.sh` and adjust the amount of memory used to whatever you want to provide to Spark.
-- Optionally you can copy `sample-app.conf` to `app.conf` and include the commented out params in `scripts/spark_submit_jar.sh` and further configure the software by changing `app.conf`. Take a look at `sample-app.conf` to get an idea of what can be configured.
-- Finally use the following script to compute the model: `scripts/build_model.sh`
+# See also
 
-# Maintenance related commands
-
-You can get informations about the running containers with:
 ```bash
-docker-compose ps
-docker-compose logs
-docker-compose top
+./wsd --help
 ```
-
-Shut the container down (i.e. removing them) with:
-```bash
-docker-compose down
-```
-
-For further information on Compose consult the [documentation](https://docs.docker.com/compose/)
