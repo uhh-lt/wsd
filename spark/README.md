@@ -1,5 +1,8 @@
 # Developer guide for spark submodule
 
+This guide is for developers. For most users the `./wsd` command will provide enough functionality to build your own models.
+See `./wsd --help` for more information.
+
 ## Using spark-submit
 
 1. Run `sbt spark/assembly`

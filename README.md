@@ -15,7 +15,8 @@ A software to construct and visualize Word Sense Disambiguation models based on 
   language  = {english}
 }
 ```
-## Prerequisites
+
+# Prerequisites
 
 - Java 1.8
 - Docker Engine (1.13.0+), see [Docker installation guide](https://docs.docker.com/engine/installation/)
