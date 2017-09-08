@@ -25,12 +25,14 @@ A software to construct and visualize Word Sense Disambiguation models based on 
 
 # Serving the WSD model
 
+[Online demo](http://ltbev.informatik.uni-hamburg.de/wsd)
+
 ## Download precalculated DB and pictures
 
 We provide a ready for use database and a dump of pictures for all senses in the database.
 To download and prepare the project with those two artifacts, you can use the following command:
 
-To download and untar it, you will need at least 320 GB of free disk space!
+To download and untar it, you will need 300 GB of free disk space!
 
 ```bash
 ./wsd model:donwload
