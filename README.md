@@ -16,7 +16,7 @@ A software to construct and visualize Word Sense Disambiguation models based on 
 }
 ```
 
-# Prerequisites
+## Prerequisites
 
 - Java 1.8
 - Docker Engine (1.13.0+), see [Docker installation guide](https://docs.docker.com/engine/installation/)
@@ -24,11 +24,11 @@ A software to construct and visualize Word Sense Disambiguation models based on 
 - (Spark 2.0+, to [build your own model](#build-your-own-db))
 
 
-# Serving the WSD model
+## Serving the WSD model
 
 [Online demo](http://ltbev.informatik.uni-hamburg.de/wsd)
 
-## Download precalculated DB and pictures
+### Download precalculated DB and pictures
 
 We provide a ready for use database and a dump of pictures for all senses in the database.
 To download and prepare the project with those two artifacts, you can use the following command:
@@ -41,7 +41,7 @@ To download and untar it, you will need 300 GB of free disk space!
 
 Note: For instructions on how to rebuild the DB with the model, please see below: [Build your own DB](#build-your-own-db)
 
-## Start the web application
+### Start the web application
 
 To start the application:
 
@@ -53,15 +53,15 @@ The web application runs with Docker Compose. To customize your installation adj
 
 To get further information on the running containers you can use all Docker Compose commands, such as `docker-compose ps` and `docker-compose logs`.
 
-# Build your own DB
+## Build your own DB
 
-First set the `$SPARK_HOME` environment variable or provide `spark-submit` on your path. TODO link
+First set the `$SPARK_HOME` environment variable or provide `spark-submit` on your path.
 
 By modifying the script `scripts/spark_submit_jar.sh` you can adjust the amount of memory used by Spark (consider changing `--conf 'spark.driver.memory=4g'` and `--conf 'spark.executor.memory=1g'`).
 
 We recommend to first use a **toy training data set** to build a toy model within a few minutes.
 
-## Build small toy model
+### Build small toy model
 
 ```bash
 ./wsd model:build-toy
@@ -69,11 +69,15 @@ We recommend to first use a **toy training data set** to build a toy model withi
 
 This model only provides senses for the word "Python" but is fully functional and should be used during the initial setup of the web application.
 
-## Build full model
+### Build full model
 
 Building the full model will take nearly 11 hours on an eight core machine with 30 GB of memory and needs around 300 GB of free disk space. It will also download 4 GB of training data.
 
-# See also
+```bash
+./wsd model:build-full
+```
+
+## See also
 
 ```bash
 ./wsd --help
