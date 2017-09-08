@@ -51,4 +51,4 @@ data/results/*
 
 data/logs/*
 !data/logs/.gitkeep
-
+data/*
