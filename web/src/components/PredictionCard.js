@@ -220,7 +220,7 @@ class PredictionCard extends Component {
                     features={mutualFeatures.slice(0,20)}
                     totalNum={mutualFeatures.length}
                     color={purple100}
-                    onOpenDetails={onOpenDetails}
+                    onOpenDetails={(model.word_vector_model === "depslm") ? null: onOpenDetails} // do not open for depslm
                 />
             </CardTextWithTitle>
         );
