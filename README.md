@@ -73,6 +73,10 @@ This model only provides senses for the word "Python" but is fully functional an
 
 Building the full model will take nearly 11 hours on an eight core machine with 30 GB of memory and needs around 300 GB of free disk space. It will also download 4 GB of training data.
 
+```bash
+./wsd model:build-full
+```
+
 ## See also
 
 ```bash
