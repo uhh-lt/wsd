@@ -55,7 +55,7 @@ To get further information on the running containers you can use all Docker Comp
 
 ## Build your own DB
 
-First set the `$SPARK_HOME` environment variable or provide `spark-submit` on your path. TODO link
+First set the `$SPARK_HOME` environment variable or provide `spark-submit` on your path.
 
 By modifying the script `scripts/spark_submit_jar.sh` you can adjust the amount of memory used by Spark (consider changing `--conf 'spark.driver.memory=4g'` and `--conf 'spark.executor.memory=1g'`).
 
