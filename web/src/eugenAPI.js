@@ -30,7 +30,7 @@ function convertLegacyToNew(json) {
     return {
         ...json,
         contextFeatures: [],
-        predictions: json.predictions.map(p => {
+        predictions: (json.predictions) ? json.predictions.map(p => {
             return {
                 ...p,
                 rank: p.rank.toString(),
@@ -50,8 +50,7 @@ function convertLegacyToNew(json) {
                 contextFeatures: (p['contextFeatures']) ? p['contextFeatures'] : [],
                 mutualFeatures: (p['mutualFeatures']) ? p['mutualFeatures'] : [],
                 top20ClusterFeatures: (p['top20ClusterFeatures']) ? p['top20ClusterFeatures'] : []
-            }})
-
+            }}) : []
     }
 }
 
