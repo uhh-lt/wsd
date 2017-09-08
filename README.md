@@ -67,7 +67,7 @@ We recommend to first use a **toy training data set** to build a toy model withi
 ./wsd model:build-toy
 ```
 
-This model only provides senses for the word "Python" but is fully functional and should be used during the initial setup of the web application.
+This model only provides senses for the word "Python" but is fully functional.
 
 ### Build full model
 
