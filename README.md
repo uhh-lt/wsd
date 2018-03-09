@@ -36,7 +36,7 @@ To download and prepare the project with those two artifacts, you can use the fo
 To download and untar it, you will need 300 GB of free disk space!
 
 ```bash
-./wsd model:donwload
+./wsd model:download
 ```
 
 Note: For instructions on how to rebuild the DB with the model, please see below: [Build your own DB](#build-your-own-db)
