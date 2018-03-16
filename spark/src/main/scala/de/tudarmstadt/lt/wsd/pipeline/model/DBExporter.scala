@@ -65,8 +65,12 @@ object DBExporter extends RuntimeContext {
   }
 
   def autoExportAllModels(parquetLocation: String): Unit = {
-    val pathAndNamesInDir = (dir: String) =>
-      new File(dir).listFiles().filter(_.isDirectory).map(d => (d.getCanonicalPath, d.getName))
+    val pathAndNamesInDir = (dir: String) => {
+      Option(new File(dir).listFiles())
+        .getOrElse(Array.empty)
+        .filter(_.isDirectory)
+        .map(d => (d.getCanonicalPath, d.getName))
+    }
 
     val senseInventoryLocation = s"$parquetLocation/sense_inventories"
     val wordVectorLocation = s"$parquetLocation/word_vectors"

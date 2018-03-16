@@ -47,6 +47,30 @@ lazy val common = (project in file("common")).
       |DBs.setupAll()""".stripMargin
   )
 
+lazy val bing_images = (project in file("bing_images")).
+  settings(globalSettings: _*).
+  settings(
+    name := "bing_images",
+    libraryDependencies ++= bingImagesDeps,
+    test in assembly := {},
+    assemblyMergeStrategy in assembly := {
+      case PathList("META-INF", "io.netty.versions.properties") => MergeStrategy.first
+      case PathList("org", "apache", "commons", "logging", xs @ _*) => MergeStrategy.first
+      case x =>
+        val oldStrategy = (assemblyMergeStrategy in assembly).value
+        oldStrategy(x)
+    },
+    initialCommands in console:= """
+       |import de.tudarmstadt.lt.wsd.common._
+       |import de.tudarmstadt.lt.wsd.common.model._
+       |import de.tudarmstadt.lt.wsd.common.Implicits._
+       |import scalikejdbc._
+       |import scalikejdbc.config._
+       |DBs.setupAll()""".stripMargin
+  ).
+  dependsOn(common)
+
+
 lazy val api = (project in file("api")).
   enablePlugins(PlayScala).
   settings(globalSettings: _*).
@@ -57,7 +81,7 @@ lazy val api = (project in file("api")).
     javaOptions in Universal ++= Seq("-Dpidfile.path=/dev/null")
       // Copied from http://skinny-framework.org/documentation/orm.html
   ).
-  dependsOn(common)
+  dependsOn(common, bing_images)
 
 lazy val spark = (project in file("spark")).
   enablePlugins(JavaAppPackaging).

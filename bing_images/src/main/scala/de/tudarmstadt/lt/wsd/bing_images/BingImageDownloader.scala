@@ -1,4 +1,4 @@
-package de.tudarmstadt.lt.wsd.common.model.images
+package de.tudarmstadt.lt.wsd.bing_images
 
 import java.io.{File, FileNotFoundException}
 import java.security.MessageDigest
@@ -29,8 +29,8 @@ class BingImageDownloader(baseUrl: String) extends LazyLogging {
 
   private implicit val photoReads = Json.reads[BingPhoto]
   private val config = ConfigFactory.load()
-  private val apiKey = config.getString("wsd.common.bing.api_key")
-  private val imageFolder = config.getString("wsd.common.bing.image_folder")
+  private val apiKey = config.getString("wsd.bing_images.api_key")
+  private val imageFolder = config.getString("wsd.bing_images.image_folder")
   private val apiEndpoint = baseUrl + "/bing/v5.0/images/search"
 
   def readCache: Map[String, Option[String]] = {

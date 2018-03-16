@@ -13,4 +13,4 @@ Coontaining:
 
 
 
-Source list of words: `./../../babelnet-downloader/var/Voc-TWSI-SemEval-Apache.csv`
+Source list of words: `./Voc-TWSI-SemEval-Apache.csv`

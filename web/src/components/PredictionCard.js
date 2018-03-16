@@ -174,11 +174,9 @@ class PredictionCard extends Component {
             </CardTextWithTitle>
         );
 
-        const NoFeatures = <span>
+        const NoFeatures = <span/>;
 
-        </span>
-
-        const contextFeaturesText = (
+        const contextWordsText = (
             <CardTextWithTitle
                 expandable={true}
                 key="context-words"
@@ -198,13 +196,31 @@ class PredictionCard extends Component {
             </CardTextWithTitle>
         );
 
+        const contextDepsText = (
+            <CardTextWithTitle
+                expandable={true}
+                key="context-deps"
+                title="Context dependencies"
+                info={<span>The context dependencies are syntactic dependencies extracted with the Stanford parser that often co-occur with the ambiguous target word in the given sense (so-called "first-order" features). These context features are specific to word sense, not to a word. They are computed not by simple co-occurrence method, as this would give sense-unaware representations. Instead, we perform aggregation of co-occurrences on the basis on the sense clusters which provides us sense-aware co-occurrence representations. Thus, the sense clusters are used as pivot vocabularies to obtain the sense representations.</span>}
+            >
+                { (top20ClusterFeatures.length > 0)
+                    ? <FeatureChipList
+                        features={top20ClusterFeatures}
+                        totalNum={numClusterFeatures}
+                        color={blue100}
+                    />
+                    : <NoFeatures />
+                }
+            </CardTextWithTitle>
+        );
+
         const matchingFeaturesText = (
             <CardTextWithTitle key="matching-features" title="Matching features">
                 <FeatureChipList
                     features={mutualFeatures.slice(0,20)}
                     totalNum={mutualFeatures.length}
                     color={purple100}
-                    onOpenDetails={onOpenDetails}
+                    onOpenDetails={(model.word_vector_model === "depslm") ? null: onOpenDetails} // do not open for depslm
                 />
             </CardTextWithTitle>
         );
@@ -231,7 +247,8 @@ class PredictionCard extends Component {
                 {(senseCluster.hypernyms.length > 0) ? hypernymText : <span />}
                 {(senseCluster.sampleSentences.length > 0) ? sampleSentencesText : <span />}
                 {(senseCluster.words.length > 0) ? clusterWordsText : <span />}
-                {(model.word_vector_model === "coocwords"  && top20ClusterFeatures.length > 0) ? contextFeaturesText : <span />}
+                {(model.word_vector_model === "coocwords"  && top20ClusterFeatures.length > 0) ? contextWordsText : <span />}
+                {(model.word_vector_model === "depslm"  && top20ClusterFeatures.length > 0) ? contextDepsText : <span />}
                 {matchingFeaturesText}
                 <CardActions>
                     {senseCluster.babelnet_id ? babelNetButton : <span />}

@@ -31,28 +31,24 @@ vendor
 
 # Spark
 metastore_db
+spark-warehouse/
+
+.idea/
+.ivy2
+.sbt
+.Rhistory
 
 
 #Project specific
-babelnet-downloader/var/babelnet-cache/*
-!babelnet-downloader/var/babelnet-cache/.gitkeep
-babelnet-downloader/var/composer-cache/*
-!babelnet-downloader/var/composer-cache/.gitkeep
-babelnet-downloader/var/output/
-!babelnet-downloader/var/output/.gitkeep
-.idea/
-spark-warehouse/
-github-issues/
-#!data/.gitkeep
-results/*
-!results/.gitkeep
-.ivy2
-.sbt
 docker-compose.override.yml
-babelnet-downloader/.test.env
-babelnet-downloader/babelnet-downloader.iml
-logs
-.Rhistory
 pgdata/
-babelnet-downloader/var/output_presentation
-data/models
+imgdata/
+
+data/models/*
+
+data/results/*
+!data/results/.gitkeep
+
+data/logs/*
+!data/logs/.gitkeep
+data/*
