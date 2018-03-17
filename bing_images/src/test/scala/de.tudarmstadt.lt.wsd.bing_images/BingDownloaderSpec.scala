@@ -1,25 +1,21 @@
-package de.tudarmstadt.lt.wsd.common
+package de.tudarmstadt.lt.wsd.bing_images
 
+import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
-import de.tudarmstadt.lt.wsd.common.model.images.BingImageDownloader
 import de.tudarmstadt.lt.wsd.common.model.{Sense, WeightedWord}
 import de.tudarmstadt.lt.wsd.common.utils.FileUtils
 import org.scalatest.Matchers._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{BeforeAndAfterEach, FlatSpec}
 import play.api.libs.json._
-import play.api.mvc._
-import play.api.routing.sird._
-import play.api.test._
+import play.api.mvc.{Action, Results}
+import play.api.test.WsTestClient
 import play.core.server.Server
+import play.api.routing.sird._
 
 import scala.concurrent.duration._
-import scala.concurrent.Await
 import scala.language.postfixOps
-import akka.actor.ActorSystem
-
-import scala.io.Source
 
 /**
   * Created by fide on 21.06.17.
@@ -45,7 +41,7 @@ class BingDownloaderSpec extends FlatSpec with BeforeAndAfterEach with ScalaFutu
     weighted_cluster_words=Seq(WeightedWord("word1", 0.2))
   )
 
-  "BingDownloader" should "provide an image path" in {
+  "bing_images" should "provide an image path" in {
     Server.withRouter() {
       case GET(p"/bing/v5.0/images/search") => Action {
         Results.Ok(Json.obj("value" -> Json.arr(Json.obj("thumbnailUrl" -> "/test.jpg"))))
@@ -63,21 +59,20 @@ class BingDownloaderSpec extends FlatSpec with BeforeAndAfterEach with ScalaFutu
       WsTestClient.withClient { client =>
         val downloader = new BingImageDownloader("")
 
-
         val pathFuture = downloader.download(sense)(client, system, materializer)
 
         whenReady(pathFuture) { path =>
-          assert(path.endsWith("/thumbnail.jpg"))
+          assert(path.exists(_.endsWith("/thumbnail.jpg")))
         }
 
         val cache = downloader.readCache
-        assert(cache === Map("testcase#1-traditional" -> "/test.jpg"))
+        assert(cache === Map("testcase#1-traditional" -> Some("/test.jpg")))
       }
     }
   }
 
   def deleteImageFolder(): Unit = {
-    val imageFolder = config.getString("wsd.common.bing.image_folder")
+    val imageFolder = config.getString("wsd.bing_images.image_folder")
     FileUtils.deleteFolderIfExists(imageFolder)
   }
 
