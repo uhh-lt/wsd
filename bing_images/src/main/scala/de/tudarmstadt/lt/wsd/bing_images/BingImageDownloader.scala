@@ -187,7 +187,7 @@ class BingImageDownloader(baseUrl: String) extends LazyLogging {
               case Status.OK =>
                 writeResultToDisk(sense, request, response, Some(stream))
               case _ @ status => Future.failed(
-                new Exception(s"Downloading image from $url failed with response: ${response.statusText} ($status)")
+                new Exception(s"Downloading image from $url failed with response status code: $status")
               )
             }
           } map (_ => readThumbnailPath(sense))
