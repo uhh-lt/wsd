@@ -3,7 +3,6 @@ package de.tudarmstadt.lt.wsd.bing_images
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
-import com.typesafe.scalalogging.LazyLogging
 import de.tudarmstadt.lt.wsd.common.model.Sense
 import de.tudarmstadt.lt.wsd.common.utils.TSVUtils
 import play.api.libs.ws.ahc.AhcWSClient
@@ -17,7 +16,7 @@ import scala.util.{Failure, Success}
   */
 
 
-object Run extends LazyLogging {
+object Run {
 
   DBs.setupAll()
 
