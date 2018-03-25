@@ -1,0 +1,61 @@
+#!/bin/bash
+set -o errexit
+
+scripts_dir=$(dirname $0)/scripts
+source $scripts_dir/common_functions.sh
+command="$1"
+
+if [ "$command" == "model:download" ] ;then
+  abort_if_model_already_loaded
+  $scripts_dir/model/download_latest_model.sh
+elif [ "$command" == "model:build-toy" ];then
+  abort_if_model_already_loaded
+  $scripts_dir/model/build_toy_model.sh
+elif [ "$command" == "model:build-full" ];then
+  abort_if_model_already_loaded
+  $scripts_dir/model/download_full_training_data.sh
+  $scripts_dir/model/download_full_usages.sh
+  $scripts_dir/model/build_full_model.sh
+elif [ "$command" == "model:status" ];then
+  $scripts_dir/model/status_model.sh
+elif [ "$command" == "model:backup" ];then
+  abort_if_no_model_loaded
+  $scripts_dir/model/backup_model.sh
+elif [ "$command" == "model:delete" ];then
+  abort_if_no_model_loaded
+  $scripts_dir/model/delete_model.sh
+elif [ "$command" == "web-app:start" ];then
+  abort_if_no_model_loaded
+  $scripts_dir/start_web_app.sh
+elif [ "$command" == "web-app:stop" ];then
+  docker-compose down
+elif [ "$command" == "web-app:test" ];then
+  $scripts_dir/test_api.sh
+elif [ "$command" == "web-app:logs" ];then
+  docker-compose logs
+elif [ -n "$command" ] && [ "$command" != "--help" ]; then # if [not empty && not --help]
+  echo "wsd: '$command' is not a wsd command."
+  echo "See 'wsd --help'"
+else
+  echo ""
+  echo "Usage: wsd COMMAND [OPTIONS]..."
+  echo ""
+  echo "A system for creating and serving word sense disambiguation models"
+  echo ""
+  echo "Model Bundle Commands"
+  echo "  model:download     : download and loads the latest model bundle"
+  echo "                       (recommended for normal usage)"
+  echo "  model:build-toy    : builds and loads a small toy model bundle within minutes"
+  echo "  model:build-full   : downloads the training data, then builds and loads the full model bundle"
+  echo "                       (with 8 cores ~10h)"
+  echo "  model:status       : provide information of the current model bundle loaded"
+  echo "  model:backup       : creates a backup of the current model bundle loaded"
+  echo "  model:delete       : deletes the currently loaded model bundle"
+  echo ""
+  echo "Serving Commands"
+  echo "  web-app:start      : builds the web app and then starts it"
+  echo "  web-app:stop       : stops the web app"
+  echo "  web-app:test       : runs a test prediction"
+  echo "  web-app:logs       : prints the logs"
+  echo ""
+fi

@@ -11,7 +11,6 @@ GET /:model/wordVector/*word               controllers.Application.getWordVector
 GET /:model/featureDetails/*feature/*senseID        controllers.Application.getFeatureDetails(model, feature, senseID)
 
 GET /bing-photo/:model/:senseID     controllers.BingAPI.photo(model, senseID)
-GET /flickr-photo/*text             controllers.FlickrAPI.redirectToPhoto(text)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

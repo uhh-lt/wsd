@@ -29,6 +29,9 @@ import {BASE_URL_PATH} from "./apppaths";
 // and then update the keys for each component that depends on it.
 // More on Colors: http://www.material-ui.com/#/customization/colors
 const muiTheme = getMuiTheme({
+    palette: {
+        primary1Color: "#137dc8",
+    },
     fontFamily: "Sans-Serif",
 });
 

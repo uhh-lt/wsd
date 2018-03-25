@@ -1,9 +1,9 @@
 sentence_id	sense_id	sense_position	sentence
-1	python#2	0-5	Python, is a genus of nonvenomous pythons found in Africa and Asia. 
-2	python#2	62-68	The United States Department of Agriculture reports that only Python bivittatus is an invasive species in the United States.
-3	python#2	0-5	Python skin is used to make clothing, such as vests, belts, boots and shoes, or fashion accessories, such as handbags.
-4	Python#3	0-5	Python is a widely used general-purpose, high-level programming language.
-5	Python#3	0-5	Python interpreters are available for many operating systems, allowing Python code to run on a wide variety of systems. 
-6	Python#3	37-43	CPython is managed by the non-profit Python Software Foundation.
-7	jaguar#0	4-10	The jaguar, a compact and well-muscled animal, is the largest cat in the New World.
-8	jaguar#0	0-6	Jaguar may leap onto the back of the prey and sever the cervical vertebrae, immobilizing the target.
+1	python#2	0,5	Python, is a genus of nonvenomous pythons found in Africa and Asia.
+2	python#2	62,68	The United States Department of Agriculture reports that only Python bivittatus is an invasive species in the United States.
+3	python#2	0,5	Python skin is used to make clothing, such as vests, belts, boots and shoes, or fashion accessories, such as handbags.
+4	Python#3	0,5	Python is a widely used general-purpose, high-level programming language.
+5	Python#3	0,5	Python interpreters are available for many operating systems, allowing Python code to run on a wide variety of systems.
+6	Python#3	37,43	CPython is managed by the non-profit Python Software Foundation.
+7	jaguar#0	4,10	The jaguar, a compact and well-muscled animal, is the largest cat in the New World.
+8	jaguar#0	0,6	Jaguar may leap onto the back of the prey and sever the cervical vertebrae, immobilizing the target.

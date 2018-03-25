@@ -44,11 +44,6 @@ object Dependencies {
 
   val csv_reader = "com.github.tototoshi" %% "scala-csv" % "1.3.4"
 
-  // because JoBimTexts dependency relation features are consistent with stanford corenlp version 3.3.1
-  val stanfordCoreNlpVersion = "3.3.1"
-  val core_nlp = "edu.stanford.nlp" % "stanford-corenlp" % stanfordCoreNlpVersion
-  val core_nlp_models = "edu.stanford.nlp" % "stanford-corenlp" % stanfordCoreNlpVersion classifier "models"
-
   val protobuf = "com.google.protobuf" % "protobuf-java" % "2.6.1"
   val chill = "com.twitter" %% "chill-bijection" % "0.8.0"
 
@@ -68,7 +63,6 @@ object Dependencies {
     config,
     breeze,
     scala_logging,
-    core_nlp, core_nlp_models,
     scalanlp_epic, scalanlp_epic_models,
     protobuf,
     chill,
@@ -91,7 +85,10 @@ object Dependencies {
     commons_io,
     skinny_orm,
     skinny_orm_test,
-    csv_reader,
+    csv_reader
+  )
+
+  val bingImagesDeps = baseDeps ++ Seq(
     play_ws,
     play_server % Test,
     play_netty_server % Test

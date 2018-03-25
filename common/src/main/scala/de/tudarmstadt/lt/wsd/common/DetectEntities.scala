@@ -2,7 +2,6 @@ package de.tudarmstadt.lt.wsd.common
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import de.tudarmstadt.lt.wsd.common.utils.ScalaNLPUtils
-import de.tudarmstadt.lt.wsd.common.utils.CoreNLPUtils.{OTHER_TAG => CORE_OTHER_TAG}
 import scalikejdbc._
 
 /*
@@ -12,7 +11,7 @@ import scalikejdbc._
 */
 object DetectEntities extends LazyLogging {
 
-  val OTHER_TAG = CORE_OTHER_TAG
+  val OTHER_TAG = "O"
 
   def get(text: String): List[(String, String)] = {
     val mergedEntities = getEntitiesFromScalaNLP(text) ::: getEntitiesFromDB(text) ::: getNounsFromScalaNLP(text)

@@ -22,11 +22,13 @@ object SampleSentence extends SkinnyNoIdMapper[SampleSentence] {
 }
 
 case class Position(start: Int, end: Int) {
-  override def toString: String = s"$start-$end"
+  override def toString: String = s"$start,$end"
 }
 
 object Position {
-  def apply(string: String): Position = string.split('-') match {
+
+  // Construct from comma separated strings like: 9,21
+  def apply(string: String): Position = string.split(',') match {
     case Array(start, end) => Position(start.toInt, end.toInt)
   }
 }

@@ -13,13 +13,4 @@ class FeatureExtractionSpec extends FlatSpec {
     lemmas should contain ("table")
   }
 
-  "Dependency feautre" should "be extracted correctly" in {
-    val context = "Tables with chair."
-    val word = "table"
-    val features = DependencyFeatureExtractor.extractFeatures(context, word)
-
-    features should contain ("chair#NN#prep_with")
-    features should not contain "ROOT#null#-root"
-  }
 }
-

@@ -5,7 +5,7 @@
 - This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 - Additionally the Node.js web framework Express is used as a production web server, following the the starter project [react-node-example](https://github.com/alanbsmith/react-node-example/).
 - A `Dockerfile` is provided
-- As a component library for the React application [material-ui.com](material-ui.com) is used.
+- As a component library for the React application [material-ui.com](http://www.material-ui.com) is used.
 - Redux is used to manage Reacts application state. However I was not happy with this solution, quite a lot of boilerplate code found its way into `src/actions` and `src/reducers`.
 
 ## Running during development
