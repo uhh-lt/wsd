@@ -1,11 +1,8 @@
-package de.tudarmstadt.lt.wsd.common
-
-import java.io.File
+package de.tudarmstadt.lt.wsd.bing_images
 
 import com.typesafe.config.ConfigFactory
+import de.tudarmstadt.lt.wsd.common.model.Sense
 import de.tudarmstadt.lt.wsd.common.model.Sense.InventoryName
-import de.tudarmstadt.lt.wsd.common.model.images.BingImageDownloader
-import de.tudarmstadt.lt.wsd.common.model.{Sense, WeightedWord}
 import de.tudarmstadt.lt.wsd.common.utils.FileUtils
 import org.apache.commons.io.{FileUtils => IOFileUtils}
 import org.scalatest.{BeforeAndAfterEach, fixture, _}

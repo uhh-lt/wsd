@@ -22,4 +22,3 @@ class FeatureExtractionSpec extends FlatSpec {
     features should not contain "ROOT#null#-root"
   }
 }
-
